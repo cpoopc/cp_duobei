@@ -11,10 +11,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-<!-- umeng -->
+    <!-- 友盟 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" >
-    </uses-permission>
-    <uses-permission android:name="android.permission.INTERNET" >
     </uses-permission>
     <uses-permission android:name="android.permission.READ_PHONE_STATE" >
     </uses-permission>
@@ -70,7 +68,7 @@
             android:label="@string/title_activity_post_detail" >
         </activity>
         <activity
-            android:name="com.cp.duobei.MyhomeActivity"
+            android:name="com.cp.duobei.fragment.login.MyhomeActivity"
             android:label="@string/title_activity_myhome"
             android:theme="@style/SwipeBack" >
         </activity>
@@ -79,6 +77,16 @@
             android:label="设置"
             android:theme="@style/SwipeBack" >
         </activity>
+		<activity android:name="com.umeng.fb.ConversationActivity" 
+		    android:theme="@style/NoBiaoti"
+		    />
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="5375c03256240b3f7101e878" >
+        </meta-data>
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="ChannelID" />
     </application>
 
 </manifest>

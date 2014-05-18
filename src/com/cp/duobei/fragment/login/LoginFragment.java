@@ -1,10 +1,10 @@
 package com.cp.duobei.fragment.login;
 
-import com.cp.duobei.MyhomeActivity;
 import com.cp.duobei.R;
 import com.cp.duobei.activity.MainActivity;
 import com.cp.duobei.fragment.AbstractFragment;
 import com.cp.duobei.utils.SqlUtils;
+import com.umeng.analytics.MobclickAgent;
 
 import android.content.Context;
 import android.content.Intent;
@@ -34,7 +34,17 @@ public class LoginFragment extends AbstractFragment implements OnClickListener {
 	private EditText ed_username;
 	private EditText ed_password;
 	private CheckBox mCheckBox;
-
+	@Override
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onPageStart("LoginFragment");
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPageEnd("LoginFragment");
+	}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

@@ -18,6 +18,7 @@ import com.example.ex.AbstractExAdapter;
 import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.LogUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.umeng.analytics.MobclickAgent;
 
 
 
@@ -47,6 +48,18 @@ public class PublicCourseListFragment extends AbstractFragment implements OnChil
 	ArrayList<CourseRecInfo> publiccourseListLocal = new ArrayList<CourseRecInfo>();
 	private PublicCourseAdapter adapter2;
 	ImageLoader imageLoader = ImageLoader.getInstance();
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onPageStart("PublicCourseListFragment");
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPageEnd("PublicCourseListFragment");
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {

@@ -18,7 +18,6 @@ import com.cp.duobei.dao.Constant;
 import com.cp.duobei.dao.CourseInfo;
 import com.cp.duobei.fragment.AbstractFragment;
 import com.cp.duobei.utils.UilUtil;
-import com.cp.duobei.widget.ChildViewPager;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -40,6 +39,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,62 +48,47 @@ import com.example.ex.FileUtil;
 import com.example.ex.LogUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.umeng.analytics.MobclickAgent;
-public class NewCourseFragment extends AbstractFragment implements OnRefreshListener {
+public class PickCourseFragment extends AbstractFragment implements OnRefreshListener {
 	//文件下载+数据持久化
 	private boolean hasNet;
-	private String JSONPATH = Constant.JSON_NEWCOURSE;
-	private String LOCALPATH = Constant.STORE_PATH+"/newcourse.txt";
+	private String JSONPATH_PICK = Constant.JSON_PICKCOURSE;
+	private String LOCALPATH_PICK = Constant.STORE_PATH+"/pickcourse.txt";
+	
+	private String JSONPATH_TEACHER = Constant.JSON_PICKTEACHER;
+	private String LOCALPATH_TEACHER = Constant.STORE_PATH+"/pickteacher.txt";
 	//下拉刷新
 	private PullToRefreshLayout mPullToRefreshLayout;
 	//内容容器
 	private ArrayList<CourseInfo> courseList = new ArrayList<CourseInfo>();
 	private ArrayList<CourseInfo> courseListLocal = new ArrayList<CourseInfo>();
+	private ArrayList<CourseInfo> teacherList = new ArrayList<CourseInfo>();
+	private ArrayList<CourseInfo> teacherListLocal = new ArrayList<CourseInfo>();
+	
 	//gridview+Adapter
 	private CourseAdapter mCourseAdapter;
-	private GridView mGridView;
+	private ListView mListViewPickcourse;
 	//uil
 	protected ImageLoader imageLoader = ImageLoader.getInstance();
-	//viewpager,banner
-	private ChildViewPager mViewPager;
-	private int[] images = new int[]{
-			R.drawable.banner01,
-			R.drawable.banner02,
-			R.drawable.banner03,
-			R.drawable.banner04
-		};
-		private int[] indicators = new int[]{
-				R.id.ImageView01,
-				R.id.ImageView02,
-				R.id.ImageView03,
-				R.id.ImageView04
-		};
-		private final int BIGDIG = 80000;
-		Handler mhandler;
-		ArrayList<ImageView> imgIndicatorList = new ArrayList<ImageView>();
-		private long delayMillis = 3000;
-		private boolean isDragging;
-		private Runnable runnable;
-		private MainActivity mainActivity;
-		@Override
-		public void onResume() {
-			super.onResume();
-			MobclickAgent.onPageStart("NewCourseFragment");
-		}
-		
-		@Override
-		public void onPause() {
-			super.onPause();
-			MobclickAgent.onPageEnd("NewCourseFragment");
-		}
+	private MainActivity mainActivity;
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onPageStart("PickCourseFragment");
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPageEnd("PickCourseFragment");
+	}
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View layout = inflater.inflate(R.layout.fragment_newcourse, null); 
+		View layout = inflater.inflate(R.layout.fragment_pickcourse, null); 
 		pulltoreflash(layout);
-		readfromlocal(LOCALPATH);
+		readfromlocal(LOCALPATH_PICK);
 		filedownload();
 		initgridview(layout);
-		initIndicatorList(layout);
-		initviewpager(layout);
 		return layout;
 	}
 	private void pulltoreflash(View layout) {
@@ -113,136 +98,8 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
                  .listener(this)
                  .setup(mPullToRefreshLayout);
 	}
-	private void initIndicatorList(View inflate) {
-		imgIndicatorList.clear();//容器需要清空,否则fragment生命stop后再回来会出问题(指示器不动)
-		for (int i = 0; i < indicators.length; i++) {
-			ImageView imageView = (ImageView) inflate.findViewById(indicators[i]);
-			imgIndicatorList.add(imageView);
-		};
-	}
-	@Override
-	public void onStart() {
-		super.onStart();
-		autoscrollbanner();
-//		LogUtils.e("newcoursefragment", "onStart");
-	}
-	@Override
-	public void onStop() {
-		super.onStop();
-//		LogUtils.e("newcoursefragment", "onstop");
-		mhandler.removeCallbacks(runnable);
-	}
-	private void autoscrollbanner() {
-		mhandler = new Handler();
-		runnable = new Runnable() {
-			public void run() {
-				if(!isDragging){
-					mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
-				}
-				mhandler.postDelayed(runnable, delayMillis);
-			}
-		};
-		mhandler.postDelayed(runnable, delayMillis );
-	}
-	private void initviewpager(View inflate) {
-		mViewPager = (ChildViewPager) inflate.findViewById(R.id.fragment_banner_viewpager);
-		mViewPager.setOffscreenPageLimit(2);
-		FragmentManager fm = getChildFragmentManager();
-		BannerAdapter bannerAdapter = new BannerAdapter(fm );
-		mViewPager.setAdapter(bannerAdapter);
-		mViewPager.setOnPageChangeListener(new BannerPagelistener());
-		mViewPager.setCurrentItem(BIGDIG/2);
-		FragmentActivity activity = getActivity();
-		if(activity instanceof MainActivity){
-			mainActivity = (MainActivity) activity;
-		}
-		mViewPager.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-//				LogUtils.e("mViewPager", "onTouch");
-				switch (event.getAction()) {
-				case MotionEvent.ACTION_DOWN:
-					mainActivity.setMenuDrawerEnable(false);
-					break;
-				case MotionEvent.ACTION_UP:
-				case MotionEvent.ACTION_CANCEL:
-					mainActivity.setMenuDrawerEnable(true);
-					break;
-				default:
-					break;
-				}
-				return false;
-			}
-		});
-	}
-//	public void setFocus() {
-//		//解决scrollview自动滚动到底部
-//		mViewPager.setFocusable(true);
-//		mViewPager.setFocusableInTouchMode(true);
-//		mViewPager.requestFocus();
-//	}
-
-	class BannerPagelistener implements OnPageChangeListener{
-
-		@Override
-		public void onPageScrollStateChanged(int arg0) {
-			switch (arg0) {
-			case ViewPager.SCROLL_STATE_DRAGGING:
-				isDragging = true;
-				break;
-			case ViewPager.SCROLL_STATE_IDLE:
-				isDragging = false;
-				break;
-			case ViewPager.SCROLL_STATE_SETTLING:
-				break;
-
-			default:
-				break;
-			}
-		}
-
-		@Override
-		public void onPageScrolled(int arg0, float arg1, int arg2) {
-			
-		}
-
-		@Override
-		public void onPageSelected(int arg0) {
-			for (int i = 0; i < images.length; i++) {
-				if((arg0 % images.length)==i){
-					imgIndicatorList.get(i).setImageResource(R.drawable.ic_banner_corner_unselected);
-				}else{
-					imgIndicatorList.get(i).setImageResource(R.drawable.ic_banner_corner_selected);
-				}
-			}
-		}}
-	class BannerAdapter extends FragmentPagerAdapter{
-
-		public BannerAdapter(FragmentManager fm) {
-			super(fm);
-		}
-
-		@Override
-		public Fragment getItem(int arg0) {
-			ImgFragment fragment = new ImgFragment();
-			fragment.changeImg(images[arg0 % images.length]);
-			return fragment;
-		}
-
-		@Override
-		public int getCount() {
-			return BIGDIG;
-		}
-		
-	}
-//	private void initDB() {
-//		SqlUtils sqlUtils = new SqlUtils(getActivity());
-//		mDb = sqlUtils.getReadableDatabase();
-//	}
 	//本地读取缓存
 	private void readfromlocal(String filepath){
-//		long start = System.currentTimeMillis();
 		hasNet = false;
 		if(courseListLocal.size()==0){
 			//把文件读取成utf-8格式的String
@@ -258,23 +115,20 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 				}
 			}
 		}
-//		long stop = System.currentTimeMillis();
-//		LogUtils.e("readfromlocal: useTime", (stop-start)+"毫秒");
 	}
 	private void filedownload() {
 		courseList.clear();
 		FiledownAsynctask filedownAsynctask = new FiledownAsynctask();
-		filedownAsynctask.execute(JSONPATH,LOCALPATH);
+		filedownAsynctask.execute(JSONPATH_PICK,LOCALPATH_PICK);
 	}
 	
 	private void initgridview(View inflate) {
-		mGridView = (GridView) inflate.findViewById(R.id.fragment_newcourse_gridView1);
+		mListViewPickcourse = (ListView) inflate.findViewById(R.id.fragment_pickcourse_listView1);
 		mCourseAdapter = new CourseAdapter();
 		//防止自动跳到底
-		mGridView.setFocusable(false);
-		mGridView.setAdapter(mCourseAdapter);
+		mListViewPickcourse.setAdapter(mCourseAdapter);
 //		mGridView.setOnClickListener(new GridviewListener());
-		mGridView.setOnItemClickListener(new GridviewListener());
+		mListViewPickcourse.setOnItemClickListener(new GridviewListener());
 	}
 	class GridviewListener implements OnItemClickListener{
 
@@ -358,7 +212,7 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 			TextView title;
 			TextView author;
 			if(convertView==null){
-				inflate = getActivity().getLayoutInflater().inflate(R.layout.newcourse_gridview_item, null);
+				inflate = getActivity().getLayoutInflater().inflate(R.layout.listview_item_pickcourse, null);
 				imageView = (ImageView) inflate.findViewById(R.id.imageView1);
 				title = (TextView) inflate.findViewById(R.id.textView1);
 				author = (TextView) inflate.findViewById(R.id.textView2);

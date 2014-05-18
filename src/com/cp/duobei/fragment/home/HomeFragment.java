@@ -7,6 +7,9 @@ import com.cp.duobei.activity.MainActivity;
 import com.cp.duobei.fragment.AbstractFragment;
 import com.example.ex.LogUtils;
 
+import android.graphics.drawable.Drawable;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -15,44 +18,48 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabContentFactory;
 import android.widget.TextView;
-
+/**
+ * 	viewpager+tabhost
+ *
+ */
 public class HomeFragment extends Fragment implements OnTabChangeListener, OnPageChangeListener {
-	ArrayList<String> tabnameList = new ArrayList<String>();
-	ArrayList<Fragment> fragmentList = new ArrayList<Fragment>();
+	private ArrayList<View> viewList = new ArrayList<View>();
+	private ArrayList<String> tabnameList = new ArrayList<String>();
+	private ArrayList<Fragment> fragmentList = new ArrayList<Fragment>();
 	private TabHost mTabHost;
 	private ViewPager mViewPager;
 	private MyFragmentAdapter mAdapter;
 	private MainActivity mainActivity;
+	//提供给mainactivity
+	public void addpager(String tabname,Fragment fragment) {
+		tabnameList.add(tabname);
+		fragmentList.add(fragment);
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View inflate = inflater.inflate(R.layout.fragment_home, null);
+		initMenudrawerState();
+		initViewPager(inflate);
+		initTabHost(inflate);
+		return inflate;
+	}
+	private void initMenudrawerState() {
 		FragmentActivity activity;
 		activity = getActivity();
 		if(activity instanceof MainActivity){
 			mainActivity = (MainActivity) activity;
 			mainActivity.setMenuDrawerEnable(true);
 		}
-		initViewPager(inflate);
-		initTabHost(inflate);
-		return inflate;
 	}
-	private void initTabHost(View inflate) {
-		mTabHost = (TabHost) inflate.findViewById(android.R.id.tabhost);
-		mTabHost.setup();
-		mTabHost.setOnTabChangedListener(this);
-		for(int i = 0;i<tabnameList.size();i++){
-			mTabHost.addTab(mTabHost.newTabSpec(tabnameList.get(i)).setIndicator(tabnameList.get(i)).setContent(new DommyContentFty()));
-		}
-	}
+
 	private void initViewPager(View inflate) {
 		mViewPager = (ViewPager) inflate.findViewById(R.id.home_pager);
 		FragmentManager fm = getChildFragmentManager();
@@ -61,10 +68,29 @@ public class HomeFragment extends Fragment implements OnTabChangeListener, OnPag
 		mViewPager.setOnPageChangeListener(this);
 		mViewPager.setOffscreenPageLimit(2);
 	}
-	public void addpager(String tabname,Fragment fragment) {
-		tabnameList.add(tabname);
-		fragmentList.add(fragment);
+	private void initTabHost(View inflate) {
+		mTabHost = (TabHost) inflate.findViewById(android.R.id.tabhost);
+		mTabHost.setup();
+		mTabHost.setOnTabChangedListener(this);
+//		viewList.add(object)
+	 if (VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
+		 for(int i = 0;i<tabnameList.size();i++){
+			 mTabHost.addTab(mTabHost.newTabSpec(tabnameList.get(i)).setIndicator(tabnameList.get(i)).setContent(new DommyContentFty()));
+		 }
+	 }else{
+		 for(int i = 0;i<tabnameList.size();i++){
+			 View inflate2 = getActivity().getLayoutInflater().inflate(R.layout.testlayout, null);
+			 TextView textView = (TextView)inflate2.findViewById(R.id.textView1);
+			 if(i==0){
+				 ImageView imageView =(ImageView) inflate2.findViewById(R.id.imageView1);
+				 imageView.setVisibility(View.INVISIBLE);
+			 } 
+			 textView.setText(tabnameList.get(i));
+			 mTabHost.addTab(mTabHost.newTabSpec(tabnameList.get(i)).setIndicator(inflate2).setContent(new DommyContentFty()));
+		 }
+	 }
 	}
+	//
 	class DommyContentFty implements TabContentFactory{
 
 		@Override
@@ -87,7 +113,8 @@ public class HomeFragment extends Fragment implements OnTabChangeListener, OnPag
 		@Override
 		public int getCount() {
 			return tabnameList.size();
-		}}
+		}
+	}
 	@Override
 	public void onPageScrollStateChanged(int arg0) {
 		// TODO Auto-generated method stub

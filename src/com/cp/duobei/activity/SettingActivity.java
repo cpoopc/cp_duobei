@@ -12,6 +12,8 @@ import com.cp.duobei.dao.Constant;
 import com.cp.duobei.utils.SwipeBackSherlockPreferenceActivity;
 import com.example.ex.ToastUtils;
 import com.example.ex.UpgradeManager;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.fb.FeedbackAgent;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -26,11 +28,33 @@ import android.widget.Toast;
 
 public class SettingActivity extends SwipeBackSherlockPreferenceActivity{
 	
-
+	FeedbackAgent agent;
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onPageStart("RecentlyFragment");
+		MobclickAgent.onResume(this);
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPageEnd("RecentlyFragment");
+		MobclickAgent.onPause(this);
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 //		setTheme(SampleList.THEME);
 		super.onCreate(savedInstanceState);
+		agent = new FeedbackAgent(this);
+		// to sync the default conversation. If there is new reply, there
+		// will be notification in the status bar. If you do not want
+		// notification, you can use
+		// agent.getDefaultConversation().sync(listener);
+		// instead.
+
+		agent.sync();
 		ActionBar supportActionBar = getSupportActionBar();
 //		supportActionBar.setTitle("dddddddd");
 		supportActionBar.setDisplayHomeAsUpEnabled(true);
@@ -67,6 +91,9 @@ public class SettingActivity extends SwipeBackSherlockPreferenceActivity{
 		else if("key_update".equals(preference.getKey())){
 			ToastUtils.showToast(SettingActivity.this, "检查更新");
 			new UpgradeManager(this,Constant.PATH_UPDATE,Constant.STORE_PATH+"/update.apk").checkandupdate();
+		}else if("key_req".equals(preference.getKey())){
+			ToastUtils.showToast(SettingActivity.this, "意见反馈");
+			agent.startFeedbackActivity();
 		}
 		return super.onPreferenceTreeClick(preferenceScreen, preference);
 	}

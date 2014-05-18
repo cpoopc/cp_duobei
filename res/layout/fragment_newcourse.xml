@@ -15,7 +15,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <android.support.v4.view.ViewPager
+    <com.cp.duobei.widget.ChildViewPager
         android:id="@+id/fragment_banner_viewpager"
         android:layout_width="match_parent"
         android:layout_height="120dp" />

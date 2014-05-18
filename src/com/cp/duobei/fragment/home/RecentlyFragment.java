@@ -18,6 +18,7 @@ import com.cp.duobei.fragment.AbstractFragment;
 import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.FileUtil;
 import com.example.ex.LogUtils;
+import com.umeng.analytics.MobclickAgent;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -43,6 +44,17 @@ public class RecentlyFragment extends AbstractFragment implements OnRefreshListe
 	private PullToRefreshLayout mPullToRefreshLayout;
 	
 	@Override
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onPageStart("RecentlyFragment");
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPageEnd("RecentlyFragment");
+	}
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
@@ -50,10 +62,13 @@ public class RecentlyFragment extends AbstractFragment implements OnRefreshListe
 		pulltoreflash(layout);
 		readfromlocal(LOCALPATH);
 		filedownload();
+		initListview(layout);
+		return layout;
+	}
+	private void initListview(View layout) {
 		mListView = (ListView) layout.findViewById(R.id.lv_fragment_recently);
 		adapter = new RecentlyAdapter();
 		mListView.setAdapter(adapter);
-		return layout;
 	}
 	private void pulltoreflash(View layout) {
 		mPullToRefreshLayout = (PullToRefreshLayout) layout.findViewById(R.id.fragment_pulltoreflash_recently);

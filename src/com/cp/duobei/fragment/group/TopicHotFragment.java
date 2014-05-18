@@ -21,6 +21,7 @@ import com.cp.duobei.widget.XListView.IXListViewListener;
 import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.FileUtil;
 import com.example.ex.LogUtils;
+import com.umeng.analytics.MobclickAgent;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -55,6 +56,18 @@ public class TopicHotFragment extends AbstractFragment implements IXListViewList
 	private boolean hasNet;
 	private String JSONPATH = Constant.POST_LIST;
 	private String LOCALPATH = Constant.STORE_PATH+"/topichot.txt";
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onPageStart("TopicHotFragment");
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPageEnd("TopicHotFragment");
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {

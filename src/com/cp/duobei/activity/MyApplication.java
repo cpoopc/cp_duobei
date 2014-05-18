@@ -29,7 +29,7 @@ public class MyApplication extends Application {
 //				.diskCacheFileNameGenerator(new Md5FileNameGenerator())
 				.discCacheFileNameGenerator(new Md5FileNameGenerator())
 				.tasksProcessingOrder(QueueProcessingType.LIFO)
-				.writeDebugLogs() // Remove for release app
+//				.writeDebugLogs() // Remove for release app
 				.build();
 		// Initialize ImageLoader with configuration.
 		ImageLoader.getInstance().init(config);

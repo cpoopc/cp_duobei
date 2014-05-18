@@ -31,7 +31,7 @@ public class SwipeBackSherlockPreferenceActivity extends SherlockPreferenceActiv
     }
 
     @Override
-	public View findViewById(int id) {
+    public View findViewById(int id) {
     	if(mHelper==null){
     		mHelper = new SwipeBackActivityHelper(this);
     		mHelper.onActivityCreate();

@@ -10,20 +10,14 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 
 import android.os.Bundle;
-import android.preference.Preference;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -36,13 +30,22 @@ import com.cp.duobei.fragment.group.TopicHotFragment;
 import com.cp.duobei.fragment.home.DailyRecFragment;
 import com.cp.duobei.fragment.home.HomeFragment;
 import com.cp.duobei.fragment.home.NewCourseFragment;
+import com.cp.duobei.fragment.home.PickCourseFragment;
 import com.cp.duobei.fragment.home.RecentlyFragment;
 import com.cp.duobei.fragment.login.LoginFragment;
 import com.cp.duobei.fragment.login.MyCourseFragment;
 import com.cp.duobei.fragment.login.MyInfoFragment;
 import com.cp.duobei.fragment.login.RegistFragment;
 import com.cp.duobei.fragment.publiccourse.PublicCourseListFragment;
-import com.example.ex.UpgradeManager;
+import com.umeng.analytics.MobclickAgent;
+
+/**
+ * 
+ * actionbar+menudrawer
+ * 初始化homefragment
+ * 点击menudrawer菜单,切换fragment	
+ *
+ */
 public class MainActivity extends SherlockFragmentActivity implements SearchView.OnQueryTextListener,SearchView.OnSuggestionListener, OnItemClickListener{
 
 	private MenuDrawer mDrawer;
@@ -52,19 +55,35 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 	private static final int MENU_GROUP = 2;
 	private static final int MENU_COURSE = 3;
 	private static final int MENU_SETTING = 4;
-	private boolean MODE_FULL;
 	private HomeFragment mhomeFragment;
 	private boolean autologin;
 	private String username = null;//用户名以及登陆状态
 	private SettingAdapter settingAdapter;
 	@Override
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onPageStart( "MainActivity" );
+		MobclickAgent.onResume(this);
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPageEnd( "MainActivity"  );
+		MobclickAgent.onPause(this);
+	}
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 //		new UpgradeManager(this).checkandupdate();
+		MobclickAgent.updateOnlineConfig( this );
+		MobclickAgent.openActivityDurationTrack(false);
 		initContentview();
 		initMenuview();
-		
 	}
+	/**
+	 * 主界面初始化
+	 */
 	public void initContentview() {
 		//actionbar
 		ActionBar supportActionBar = getSupportActionBar();
@@ -79,10 +98,14 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		mhomeFragment = new HomeFragment();
 		mhomeFragment.addpager("新课速递",new NewCourseFragment());
 		mhomeFragment.addpager("每日推荐",new DailyRecFragment());
-		mhomeFragment.addpager("近期更新",new RecentlyFragment());
+		mhomeFragment.addpager("精选课程",new PickCourseFragment());
 		ft.add(R.id.container, mhomeFragment);
 		ft.commit();
 	}
+	/**
+	 * 侧滑菜单初始化
+	 * 
+	 */
 	public void initMenuview() {
 		View settingview = getLayoutInflater().inflate(R.layout.main_setting,null);
 		mDrawer.setMenuView(settingview);
@@ -105,7 +128,7 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		settingAdapter = new SettingAdapter(this,mTitle,images);
 		mListView.setAdapter(settingAdapter); 
 		mListView.setOnItemClickListener(this);
-		mDrawer.setDropShadowColor(Color.BLUE);
+//		mDrawer.setDropShadowColor(Color.BLUE);
 		mDrawer.setSlideDrawable(R.drawable.ic_setting);
 		mDrawer.setDrawerIndicatorEnabled(true);
 		mDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_FULLSCREEN);
@@ -120,6 +143,9 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		}
 	}
 
+	/**
+	 * 
+	 */
 	
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -139,7 +165,10 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		initSearch(menu);
 		return true;
 	}
-
+/**
+ * actionbar搜索接口
+*	
+ */
 	private void initSearch(Menu menu) {
 		//TODO
 		//Create the search view
@@ -176,7 +205,9 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 	public boolean onQueryTextChange(String newText) {
 		return false;
 	}
-
+	/**
+	 * 点击切换fragment
+	 */
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
@@ -201,7 +232,7 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 			fragment = mhomeFragment;
 			mhomeFragment.addpager("新课速递",new NewCourseFragment());
 			mhomeFragment.addpager("每日推荐",new DailyRecFragment());
-			mhomeFragment.addpager("近期更新",new RecentlyFragment());
+			mhomeFragment.addpager("精选课程",new PickCourseFragment());
 			break;
 		case MENU_GROUP:
 			mhomeFragment = new HomeFragment();
@@ -231,7 +262,9 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		}
 		mDrawer.closeMenu(true);
 	}
-	//提供给fragment设置menudrawer触摸模式
+	/**
+	 * 提供给fragment设置menudrawer触摸模式
+	 */
 	public void setMenuDrawerEnable(boolean enable) {
 		if(enable){
 			mDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_FULLSCREEN);
@@ -240,6 +273,12 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 			
 		}
 	}
+	/**
+	 * 设置登陆界面
+	 * 已登陆:我的课表+我的资料
+	 * 未登陆:登陆+注册
+	 * 登陆状态改变时更新menudrawer的菜单显示
+	 */
 	public void setLoginedFragment(String username){
 		this.username = username;
 		mhomeFragment = new HomeFragment();

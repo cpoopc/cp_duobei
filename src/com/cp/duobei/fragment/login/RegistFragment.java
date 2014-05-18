@@ -3,6 +3,7 @@ package com.cp.duobei.fragment.login;
 import com.cp.duobei.R;
 import com.cp.duobei.fragment.AbstractFragment;
 import com.cp.duobei.utils.SqlUtils;
+import com.umeng.analytics.MobclickAgent;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,6 +24,17 @@ public class RegistFragment extends AbstractFragment implements OnClickListener 
 	private EditText ed_password;
 	private EditText ed_comfirm;
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onPageStart("RegistFragment");
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPageEnd("RegistFragment");
+	}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

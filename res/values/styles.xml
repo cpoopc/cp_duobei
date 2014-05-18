@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="AppBaseTheme" parent="android:Theme.Light"></style>
 
@@ -8,5 +8,7 @@
     <style name="SwipeBack" parent="Theme.Sherlock.Light.DarkActionBar">
         <item name="android:windowIsTranslucent">true</item>
     </style>
-
+	<style name="tabstyle">
+	    <item name="android:src">@drawable/gray</item>
+	</style>
 </resources>

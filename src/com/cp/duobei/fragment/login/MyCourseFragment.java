@@ -22,6 +22,7 @@ import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.FileUtil;
 import com.example.ex.LogUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.umeng.analytics.MobclickAgent;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -50,6 +51,17 @@ public class MyCourseFragment extends AbstractFragment implements OnRefreshListe
 	private ImageLoader imageLoader = ImageLoader.getInstance();
 	//下拉刷新
 	private PullToRefreshLayout mPullToRefreshLayout;
+	@Override
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onPageStart("MyCourseFragment");
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPageEnd("MyCourseFragment");
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {

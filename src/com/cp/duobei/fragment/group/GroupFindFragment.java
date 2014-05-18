@@ -22,6 +22,7 @@ import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.FileUtil;
 import com.example.ex.LogUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.umeng.analytics.MobclickAgent;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -51,6 +52,18 @@ public class GroupFindFragment extends AbstractFragment implements OnRefreshList
 	ImageLoader imageLoader = ImageLoader.getInstance();
 	//上拉加载
 	private int page = 1;
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onPageStart("GroupFindFragment");
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPageEnd("GroupFindFragment");
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {

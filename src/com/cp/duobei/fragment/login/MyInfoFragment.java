@@ -4,6 +4,7 @@ import com.cp.duobei.R;
 import com.cp.duobei.R.layout;
 import com.cp.duobei.activity.MainActivity;
 import com.cp.duobei.fragment.AbstractFragment;
+import com.umeng.analytics.MobclickAgent;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,18 @@ import android.widget.Toast;
  * 
  */
 public class MyInfoFragment extends AbstractFragment implements OnClickListener {
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onPageStart("MyInfoFragment");
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPageEnd("MyInfoFragment");
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
