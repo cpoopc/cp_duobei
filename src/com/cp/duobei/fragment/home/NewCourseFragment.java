@@ -24,6 +24,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -156,25 +158,28 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 		if(activity instanceof MainActivity){
 			mainActivity = (MainActivity) activity;
 		}
-		mViewPager.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
+		//3.0以上才
+		if (VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
+			mViewPager.setOnTouchListener(new OnTouchListener() {
+				
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
 //				LogUtils.e("mViewPager", "onTouch");
-				switch (event.getAction()) {
-				case MotionEvent.ACTION_DOWN:
-					mainActivity.setMenuDrawerEnable(false);
-					break;
-				case MotionEvent.ACTION_UP:
-				case MotionEvent.ACTION_CANCEL:
-					mainActivity.setMenuDrawerEnable(true);
-					break;
-				default:
-					break;
+					switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						mainActivity.setMenuDrawerEnable(false);
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						mainActivity.setMenuDrawerEnable(true);
+						break;
+					default:
+						break;
+					}
+					return false;
 				}
-				return false;
-			}
-		});
+			});
+		}
 	}
 //	public void setFocus() {
 //		//解决scrollview自动滚动到底部
