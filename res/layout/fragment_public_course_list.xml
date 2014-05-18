@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PublicCourseListFragment" >
+
+      <ExpandableListView
+        android:id="@+id/exListView_publiccourse"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" >
+    </ExpandableListView>
+
+    <ListView
+        android:id="@+id/lv_publiccourse"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/exListView_publiccourse" >
+
+    </ListView>
+
+
+</LinearLayout>

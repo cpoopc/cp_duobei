@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.cp.duobei"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="18" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<!-- umeng -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.INTERNET" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" >
+    </uses-permission>
+
+    <application
+        android:name="com.cp.duobei.activity.MyApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_duobei"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.cp.duobei.activity.SplanActivity"
+            android:configChanges="keyboardHidden|screenSize|orientation"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoBiaoti" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.cp.duobei.activity.MainActivity"
+            android:configChanges="keyboardHidden|screenSize|orientation"
+            android:label="@string/title_activity_main"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
+        </activity>
+        <activity
+            android:name="com.cp.duobei.activity.UserGuidActivity"
+            android:configChanges="keyboardHidden|screenSize|orientation"
+            android:label="@string/title_activity_main"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoBiaoti" >
+        </activity>
+        <activity
+            android:name="com.cp.duobei.activity.SecendActivity"
+            android:label="@string/title_activity_secend"
+            android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
+        </activity>
+        <activity
+            android:name="com.cp.duobei.activity.CourseDetailActivity"
+            android:label="@string/title_activity_secend"
+            android:theme="@style/SwipeBack" >
+        </activity>
+        <activity
+            android:name="com.cp.duobei.activity.VideoActivity"
+            android:label="@string/title_activity_video" >
+        </activity>
+        <activity
+            android:name="com.cp.duobei.activity.PostDetailActivity"
+            android:label="@string/title_activity_post_detail" >
+        </activity>
+        <activity
+            android:name="com.cp.duobei.MyhomeActivity"
+            android:label="@string/title_activity_myhome"
+            android:theme="@style/SwipeBack" >
+        </activity>
+        <activity
+            android:name="com.cp.duobei.activity.SettingActivity"
+            android:label="设置"
+            android:theme="@style/SwipeBack" >
+        </activity>
+    </application>
+
+</manifest>

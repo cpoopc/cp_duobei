@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<uk.co.senab.actionbarpulltorefresh.extras.actionbarsherlock.PullToRefreshLayout
+    android:id="@+id/fragment_pulltoreflash_newcourse"
+     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    <ScrollView  
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/linearLayout1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="0dp">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/fragment_banner_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="120dp" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/fragment_banner_viewpager"
+        android:layout_alignParentRight="true" >
+
+        <ImageView
+            android:id="@+id/ImageView01"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_banner_corner_selected" />
+
+        <ImageView
+            android:id="@+id/ImageView02"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_banner_corner_selected" />
+
+        <ImageView
+            android:id="@+id/ImageView03"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_banner_corner_selected" />
+
+        <ImageView
+            android:id="@+id/ImageView04"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_banner_corner_selected" />
+    </LinearLayout>
+
+    <com.cp.duobei.widget.MyGridView 
+        android:id="@+id/fragment_newcourse_gridView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textView1"
+        android:numColumns="2" >
+    </com.cp.duobei.widget.MyGridView>
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/fragment_banner_viewpager"
+        android:text="新课速递"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+
+</RelativeLayout>
+    </ScrollView>
+    </uk.co.senab.actionbarpulltorefresh.extras.actionbarsherlock.PullToRefreshLayout>

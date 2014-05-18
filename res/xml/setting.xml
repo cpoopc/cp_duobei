@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="程序设置"><CheckBoxPreference android:key="key_wifi" android:summaryOff="联网时下载图片" android:summaryOn="wifi联网时才下载图片" android:title="节省流量" /><Preference android:title="清空缓存" android:key="key_clear" /><Preference android:title="检查升级" android:key="key_update" /></PreferenceCategory>
+    
+    
+    
+    
+    
+    <PreferenceCategory android:title="联系我们"><EditTextPreference android:title="意见反馈" android:dialogMessage="请把您宝贵的意见发给我们" android:negativeButtonText="取消" android:key="key_req" android:positiveButtonText="提交" android:dialogTitle="意见反馈" /><Preference android:title="关于" android:key="key_about" /></PreferenceCategory>
+
+</PreferenceScreen>
