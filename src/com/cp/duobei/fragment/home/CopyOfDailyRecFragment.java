@@ -36,7 +36,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class DailyRecFragment extends AbstractFragment implements OnRefreshListener {
+public class CopyOfDailyRecFragment extends AbstractFragment implements OnRefreshListener {
 	//文件下载+数据持久化
 	private boolean hasNet;
 	private String JSONPATH_DAILY = Constant.JSON_DAILYREC;
@@ -79,18 +79,18 @@ public class DailyRecFragment extends AbstractFragment implements OnRefreshListe
 	}
 	private void initlistview(View layout) {
 		ListView mListView = (ListView) layout.findViewById(R.id.lv_fragment_dailyrec);
-//		//嵌套listview
-//		View inflate = getActivity().getLayoutInflater().inflate(R.layout.fragment_recently, null);
-//		ListView findlistview = (ListView) inflate.findViewById(R.id.lv_fragment_recently);
-//		TextView headview_rec = new TextView(getActivity());
-//		headview_rec.setText("近期更新");
-//		findlistview.addHeaderView(headview_rec);
-//		adapterRec = new RecentlyAdapter();
-//		findlistview.setAdapter(adapterRec);
+		//嵌套listview
+		View inflate = getActivity().getLayoutInflater().inflate(R.layout.fragment_recently, null);
+		ListView findlistview = (ListView) inflate.findViewById(R.id.lv_fragment_recently);
+		TextView headview_rec = new TextView(getActivity());
+		headview_rec.setText("近期更新");
+		findlistview.addHeaderView(headview_rec);
+		adapterRec = new RecentlyAdapter();
+		findlistview.setAdapter(adapterRec);
 		TextView headview_daily = new TextView(getActivity());
 		headview_daily.setText("每日推荐");
 		mListView.addHeaderView(headview_daily);
-//		mListView.addFooterView(inflate);
+		mListView.addFooterView(inflate);
 		adapter = new DailyrecAdapter();
 		mListView.setAdapter(adapter);
 	}
@@ -201,13 +201,12 @@ public class DailyRecFragment extends AbstractFragment implements OnRefreshListe
 		}
 	}
 	class DailyrecAdapter extends BaseAdapter{
-		private int count;
 		@Override
 		public int getCount() {
 			if(hasNet){
-				return (courserecList.size()+recentlyList.size()+1);
+				return courserecList.size();
 			}
-			return (courserecListLocal.size()+recentlyListLocal.size()+1);
+			return courserecListLocal.size();
 		}
 
 		@Override
@@ -219,88 +218,38 @@ public class DailyRecFragment extends AbstractFragment implements OnRefreshListe
 		public long getItemId(int position) {
 			return 0;
 		}
-		@Override
-		public int getItemViewType(int position) {
-			count = hasNet ? courserecList.size():courserecListLocal.size();
-			if(position<count){
-				//每日推荐
-				return 0;
-			}else if(position==count){
-				//文字行
-				return 1;
-				//近期更新
-			}else return 2;
-		}
-		@Override
-		public int getViewTypeCount() {
-			return 3;
-		}
-		
-		class ViewHolder_1{
+		class ViewHolder{
 			TextView tv_title;
 			TextView tv_author;
 			TextView tv_good;
 			ImageView img_title;
 		}
-		class ViewHolder_2{
-			TextView tv_title;
-			TextView tv_author;
-			TextView tv_content;
-		}
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View layout = null;
-			if(getItemViewType(position)==0){
-				ViewHolder_1 holder;
-				if(convertView!=null){
-					layout = convertView;
-					holder = (ViewHolder_1) layout.getTag();
-				}else{
-					layout = getActivity().getLayoutInflater().inflate(R.layout.listview_item_courserec, null);
-					holder= new ViewHolder_1();
-					holder.tv_title = (TextView) layout.findViewById(R.id.tv_courserec_title);
-					holder.tv_author = (TextView) layout.findViewById(R.id.tv_courserec_author);
-					holder.tv_good = (TextView) layout.findViewById(R.id.tv_courserec_good);
-					holder.img_title = (ImageView) layout.findViewById(R.id.img_courserec_title);
-					layout.setTag(holder);
-				}
-				CourseRecInfo info;
-				if(hasNet){
-					info = courserecList.get(position);
-				}else{
-					info = courserecListLocal.get(position);
-				}
-				holder.tv_title.setText(info.title);
-				holder.tv_author.setText(info.author);
-				holder.tv_good.setText(info.good);
-				imageLoader.displayImage(info.imagepath, holder.img_title, UilUtil.options, null);
-			}else if(getItemViewType(position)==1){
-				TextView textView = new TextView(getActivity());
-				textView.setText("近期更新");
-				layout = textView;
+			View layout;
+			ViewHolder holder;
+			if(convertView!=null){
+				layout = convertView;
+				holder = (ViewHolder) layout.getTag();
 			}else{
-				ViewHolder_2 holder;
-				if(convertView!=null){
-					layout = convertView;
-					holder = (ViewHolder_2) layout.getTag();
-				}else{
-					layout = getActivity().getLayoutInflater().inflate(R.layout.listview_item_recently, null);
-					holder= new ViewHolder_2();
-					holder.tv_title = (TextView) layout.findViewById(R.id.tv_recently_title);
-					holder.tv_author = (TextView) layout.findViewById(R.id.tv_recently_author);
-					holder.tv_content = (TextView) layout.findViewById(R.id.tv_recently_content);
-					layout.setTag(holder);
-				}
-				RecentlyInfo info;
-				if(hasNet){
-					info = recentlyList.get(position-count-1);
-				}else{
-					info = recentlyListLocal.get(position-count-1);
-				}
-				holder.tv_title.setText(info.title);
-				holder.tv_author.setText(info.author);
-				holder.tv_content.setText(info.content);
+				layout = getActivity().getLayoutInflater().inflate(R.layout.listview_item_courserec, null);
+				holder= new ViewHolder();
+				holder.tv_title = (TextView) layout.findViewById(R.id.tv_courserec_title);
+				holder.tv_author = (TextView) layout.findViewById(R.id.tv_courserec_author);
+				holder.tv_good = (TextView) layout.findViewById(R.id.tv_courserec_good);
+				holder.img_title = (ImageView) layout.findViewById(R.id.img_courserec_title);
+				layout.setTag(holder);
 			}
+			CourseRecInfo info;
+			if(hasNet){
+				info = courserecList.get(position);
+			}else{
+				info = courserecListLocal.get(position);
+			}
+			holder.tv_title.setText(info.title);
+			holder.tv_author.setText(info.author);
+			holder.tv_good.setText(info.good);
+			imageLoader.displayImage(info.imagepath, holder.img_title, UilUtil.options, null);
 //			LogUtils.e("DailyRec", "info.imagepath"+info.imagepath);
 			return layout;
 		}}

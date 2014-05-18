@@ -59,6 +59,7 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 	private boolean autologin;
 	private String username = null;//用户名以及登陆状态
 	private SettingAdapter settingAdapter;
+	private FragmentManager fm;
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -92,8 +93,7 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		//menudrawer
 		mDrawer = MenuDrawer.attach(this,Type.OVERLAY);
 		mDrawer.setContentView(R.layout.activity_main);
-		//主界面fragment初始化
-		FragmentManager fm = getSupportFragmentManager();
+		fm = getSupportFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
 		mhomeFragment = new HomeFragment();
 		mhomeFragment.addpager("新课速递",new NewCourseFragment());
@@ -255,7 +255,7 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 			break;
 		}
 		if(fragment!=null){
-			FragmentManager fm = getSupportFragmentManager();
+//			FragmentManager fm = getSupportFragmentManager();
 			FragmentTransaction ft = fm.beginTransaction();
 			ft.replace(R.id.container, fragment);
 			ft.commit();

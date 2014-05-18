@@ -80,6 +80,9 @@
 		<activity android:name="com.umeng.fb.ConversationActivity" 
 		    android:theme="@style/NoBiaoti"
 		    />
+        <activity android:name="com.umeng.fb.ContactActivity" 
+		    android:theme="@style/NoBiaoti"
+            />
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="5375c03256240b3f7101e878" >
