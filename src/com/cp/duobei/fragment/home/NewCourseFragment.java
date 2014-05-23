@@ -14,6 +14,7 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 import com.cp.duobei.R;
 import com.cp.duobei.activity.CourseDetailActivity;
 import com.cp.duobei.activity.MainActivity;
+import com.cp.duobei.activity.MyApplication;
 import com.cp.duobei.dao.Constant;
 import com.cp.duobei.dao.CourseInfo;
 import com.cp.duobei.fragment.AbstractFragment;
@@ -34,6 +35,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -50,6 +52,8 @@ import android.widget.Toast;
 import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.FileUtil;
 import com.example.ex.LogUtils;
+import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.umeng.analytics.MobclickAgent;
 public class NewCourseFragment extends AbstractFragment implements OnRefreshListener {
@@ -377,8 +381,13 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 			title.setText(courseInfo.getTitle());
 			author.setText(courseInfo.getAuthor());
 			String imagePath = courseInfo.getImagepath();
-			//使用UIL异步加载图片
-			imageLoader.displayImage(imagePath, imageView, UilUtil.options, null);
+//			HashCodeFileNameGenerator generator = new HashCodeFileNameGenerator();
+			//TODO 打log时发现第一张图片被多次加载,全部图片被加载2次
+			
+			//TODO 如果是无图模式,计算文件名,判断文件是否存在,若存在才加载,不存在则不下载
+//			//使用UIL异步加载图片
+//			imageLoader.displayImage(imagePath, imageView, UilUtil.options, null);
+			UilUtil.loadimg(imagePath, imageView, null, null);
 			return inflate;
 		}}
 	public void refresh() {

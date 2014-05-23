@@ -235,7 +235,8 @@ public class PickCourseFragment extends AbstractFragment implements OnRefreshLis
 			author.setText(courseInfo.getAuthor());
 			String imagePath = courseInfo.getImagepath();
 			//使用UIL异步加载图片
-			imageLoader.displayImage(imagePath, imageView, UilUtil.options, null);
+//			imageLoader.displayImage(imagePath, imageView, UilUtil.options, null);
+			UilUtil.loadimg(imagePath, imageView, null, null);
 			return inflate;
 		}}
 	public void refresh() {

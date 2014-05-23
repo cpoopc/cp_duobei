@@ -273,7 +273,8 @@ public class DailyRecFragment extends AbstractFragment implements OnRefreshListe
 				holder.tv_title.setText(info.title);
 				holder.tv_author.setText(info.author);
 				holder.tv_good.setText(info.good);
-				imageLoader.displayImage(info.imagepath, holder.img_title, UilUtil.options, null);
+//				imageLoader.displayImage(info.imagepath, holder.img_title, UilUtil.options, null);
+				UilUtil.loadimg(info.imagepath, holder.img_title, null, null);
 			}else if(getItemViewType(position)==1){
 				TextView textView = new TextView(getActivity());
 				textView.setText("近期更新");
@@ -305,56 +306,57 @@ public class DailyRecFragment extends AbstractFragment implements OnRefreshListe
 			return layout;
 		}}
 	
-	class RecentlyAdapter extends BaseAdapter{
-		
-		@Override
-		public int getCount() {
-			if(hasNet){
-				return recentlyList.size();
-			}
-			return recentlyListLocal.size();
-		}
-
-		@Override
-		public Object getItem(int position) {
-			return null;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return 0;
-		}
-		class ViewHolder{
-			TextView tv_title;
-			TextView tv_author;
-			TextView tv_content;
-		}
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View layout;
-			ViewHolder holder;
-			if(convertView!=null){
-				layout = convertView;
-				holder = (ViewHolder) layout.getTag();
-			}else{
-				layout = getActivity().getLayoutInflater().inflate(R.layout.listview_item_recently, null);
-				holder= new ViewHolder();
-				holder.tv_title = (TextView) layout.findViewById(R.id.tv_recently_title);
-				holder.tv_author = (TextView) layout.findViewById(R.id.tv_recently_author);
-				holder.tv_content = (TextView) layout.findViewById(R.id.tv_recently_content);
-				layout.setTag(holder);
-			}
-			RecentlyInfo info;
-			if(hasNet){
-				info = recentlyList.get(position);
-			}else{
-				info = recentlyListLocal.get(position);
-			}
-			holder.tv_title.setText(info.title);
-			holder.tv_author.setText(info.author);
-			holder.tv_content.setText(info.content);
-			return layout;
-		}}
+//	class RecentlyAdapter extends BaseAdapter{
+//		
+//		@Override
+//		public int getCount() {
+//			if(hasNet){
+//				return recentlyList.size();
+//			}
+//			return recentlyListLocal.size();
+//		}
+//
+//		@Override
+//		public Object getItem(int position) {
+//			return null;
+//		}
+//
+//		@Override
+//		public long getItemId(int position) {
+//			return 0;
+//		}
+//		class ViewHolder{
+//			TextView tv_title;
+//			TextView tv_author;
+//			TextView tv_content;
+//		}
+//		@Override
+//		public View getView(int position, View convertView, ViewGroup parent) {
+//			View layout;
+//			ViewHolder holder;
+//			if(convertView!=null){
+//				layout = convertView;
+//				holder = (ViewHolder) layout.getTag();
+//			}else{
+//				layout = getActivity().getLayoutInflater().inflate(R.layout.listview_item_recently, null);
+//				holder= new ViewHolder();
+//				holder.tv_title = (TextView) layout.findViewById(R.id.tv_recently_title);
+//				holder.tv_author = (TextView) layout.findViewById(R.id.tv_recently_author);
+//				holder.tv_content = (TextView) layout.findViewById(R.id.tv_recently_content);
+//				layout.setTag(holder);
+//			}
+//			RecentlyInfo info;
+//			if(hasNet){
+//				info = recentlyList.get(position);
+//			}else{
+//				info = recentlyListLocal.get(position);
+//			}
+//			holder.tv_title.setText(info.title);
+//			holder.tv_author.setText(info.author);
+//			holder.tv_content.setText(info.content);
+//			return layout;
+//		}
+//	}
 	public void refresh() {
 		filedownload_daily();
 		filedownload_rec();

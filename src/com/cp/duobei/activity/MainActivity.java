@@ -10,9 +10,11 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -81,6 +83,11 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		MobclickAgent.openActivityDurationTrack(false);
 		initContentview();
 		initMenuview();
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+//		SharedPreferences sp = getSharedPreferences("com.cp.duobei_preferences.xml", 0);
+		boolean iswifimode = sp.getBoolean("key_wifi", false);
+		Log.e("iswifimode", iswifimode+"");
+//		Log.e("iswifimode", MeApplication.getInstance().iswifimode+"");
 	}
 	/**
 	 * 主界面初始化

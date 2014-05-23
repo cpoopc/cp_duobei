@@ -2,16 +2,22 @@ package com.cp.duobei.dao;
 
 import java.io.File;
 
+import com.cp.duobei.activity.MyApplication;
 
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.preference.PreferenceManager;
 
 public interface Constant {
 	//sd卡地址
 	File sdPath = Environment.getExternalStorageDirectory();
 	//数据保存文件夹
-	File STORE_PATH = new File(sdPath+"/cp/com.duobei.cp");
+	File STORE_PATH = new File(sdPath+"/cp/com.duobei.cp/");
+	File STORE_PATH_UIL = new File(sdPath+"/cp/com.duobei.cp/uil/");
 	//基本地址
 //	String PATH = "http://192.168.56.1:8080/cpdata";
 	String PATH = "http://cpduobei.qiniudn.com";
