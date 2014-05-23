@@ -19,7 +19,9 @@ import com.cp.duobei.dao.CourseInfo;
 import com.cp.duobei.fragment.AbstractFragment;
 import com.cp.duobei.utils.UilUtil;
 import com.cp.duobei.widget.ChildViewPager;
+import com.cp.duobei.widget.PagerIndicator;
 
+import android.R.mipmap;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -73,12 +75,6 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 			R.drawable.banner03,
 			R.drawable.banner04
 		};
-		private int[] indicators = new int[]{
-				R.id.ImageView01,
-				R.id.ImageView02,
-				R.id.ImageView03,
-				R.id.ImageView04
-		};
 		private final int BIGDIG = 80000;
 		Handler mhandler;
 		ArrayList<ImageView> imgIndicatorList = new ArrayList<ImageView>();
@@ -86,6 +82,7 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 		private boolean isDragging;
 		private Runnable runnable;
 		private MainActivity mainActivity;
+		private PagerIndicator mIndicator;
 		@Override
 		public void onResume() {
 			super.onResume();
@@ -104,7 +101,6 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 		readfromlocal(LOCALPATH);
 		filedownload();
 		initgridview(layout);
-		initIndicatorList(layout);
 		initviewpager(layout);
 		return layout;
 	}
@@ -114,13 +110,6 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
                  .allChildrenArePullable()
                  .listener(this)
                  .setup(mPullToRefreshLayout);
-	}
-	private void initIndicatorList(View inflate) {
-		imgIndicatorList.clear();//容器需要清空,否则fragment生命stop后再回来会出问题(指示器不动)
-		for (int i = 0; i < indicators.length; i++) {
-			ImageView imageView = (ImageView) inflate.findViewById(indicators[i]);
-			imgIndicatorList.add(imageView);
-		};
 	}
 	@Override
 	public void onStart() {
@@ -147,6 +136,8 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 		mhandler.postDelayed(runnable, delayMillis );
 	}
 	private void initviewpager(View inflate) {
+		mIndicator = (PagerIndicator) inflate.findViewById(R.id.pagerIndicator_home);
+		mIndicator.initCount(4);
 		mViewPager = (ChildViewPager) inflate.findViewById(R.id.fragment_banner_viewpager);
 		mViewPager.setOffscreenPageLimit(2);
 		FragmentManager fm = getChildFragmentManager();
@@ -209,19 +200,20 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 
 		@Override
 		public void onPageScrolled(int arg0, float arg1, int arg2) {
-			
+			mIndicator.setIndicator(arg0, arg1);
 		}
 
 		@Override
 		public void onPageSelected(int arg0) {
-			for (int i = 0; i < images.length; i++) {
-				if((arg0 % images.length)==i){
-					imgIndicatorList.get(i).setImageResource(R.drawable.ic_banner_corner_unselected);
-				}else{
-					imgIndicatorList.get(i).setImageResource(R.drawable.ic_banner_corner_selected);
-				}
-			}
-		}}
+//			for (int i = 0; i < images.length; i++) {
+//				if((arg0 % images.length)==i){
+//					imgIndicatorList.get(i).setImageResource(R.drawable.ic_banner_corner_unselected);
+//				}else{
+//					imgIndicatorList.get(i).setImageResource(R.drawable.ic_banner_corner_selected);
+//				}
+//			}
+		}
+	}
 	class BannerAdapter extends FragmentPagerAdapter{
 
 		public BannerAdapter(FragmentManager fm) {
