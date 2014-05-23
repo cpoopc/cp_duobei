@@ -18,45 +18,7 @@
     <com.cp.duobei.widget.ChildViewPager
         android:id="@+id/fragment_banner_viewpager"
         android:layout_width="match_parent"
-        android:layout_height="120dp" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/fragment_banner_viewpager"
-        android:layout_alignParentRight="true" >
-
-        <ImageView
-            android:id="@+id/ImageView01"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:padding="2dp"
-            android:src="@drawable/ic_banner_corner_selected" />
-
-        <ImageView
-            android:id="@+id/ImageView02"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:padding="2dp"
-            android:src="@drawable/ic_banner_corner_selected" />
-
-        <ImageView
-            android:id="@+id/ImageView03"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:padding="2dp"
-            android:src="@drawable/ic_banner_corner_selected" />
-
-        <ImageView
-            android:id="@+id/ImageView04"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:padding="2dp"
-            android:src="@drawable/ic_banner_corner_selected" />
-    </LinearLayout>
-
-    <com.cp.duobei.widget.MyGridView 
+        android:layout_height="120dp" /><com.cp.duobei.widget.MyGridView 
         android:id="@+id/fragment_newcourse_gridView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -71,8 +33,14 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/fragment_banner_viewpager"
         android:text="新课速递"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium" ></TextView>
 
+    <com.cp.duobei.widget.PagerIndicator
+        android:id="@+id/pagerIndicator_home"
+        android:layout_width="160px"
+        android:layout_height="36px"
+        android:layout_above="@+id/textView1"
+        android:layout_alignParentRight="true" />
 
 </RelativeLayout>
     </ScrollView>
