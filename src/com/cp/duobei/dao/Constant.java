@@ -53,4 +53,5 @@ public interface Constant {
 //	 if (VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
 //         ThemeManager.modify(ThemeManager.FULLSCREEN);
 //     }
+	String CONNECT_ERRO = "网络连接异常!";
 }

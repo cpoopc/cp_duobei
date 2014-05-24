@@ -14,15 +14,14 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 import com.cp.duobei.R;
 import com.cp.duobei.activity.CourseDetailActivity;
 import com.cp.duobei.activity.MainActivity;
-import com.cp.duobei.activity.MyApplication;
 import com.cp.duobei.dao.Constant;
 import com.cp.duobei.dao.CourseInfo;
 import com.cp.duobei.fragment.AbstractFragment;
+import com.cp.duobei.utils.ConnectiveUtils;
 import com.cp.duobei.utils.UilUtil;
 import com.cp.duobei.widget.ChildViewPager;
 import com.cp.duobei.widget.PagerIndicator;
 
-import android.R.mipmap;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -52,8 +51,7 @@ import android.widget.Toast;
 import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.FileUtil;
 import com.example.ex.LogUtils;
-import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
-import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.example.ex.ToastUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.umeng.analytics.MobclickAgent;
 public class NewCourseFragment extends AbstractFragment implements OnRefreshListener {
@@ -263,9 +261,13 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 //		LogUtils.e("readfromlocal: useTime", (stop-start)+"毫秒");
 	}
 	private void filedownload() {
-		courseList.clear();
-		FiledownAsynctask filedownAsynctask = new FiledownAsynctask();
-		filedownAsynctask.execute(JSONPATH,LOCALPATH);
+		if(!ConnectiveUtils.isConnected(getActivity())){
+			ToastUtils.showToast(getActivity(), Constant.CONNECT_ERRO);
+			return ;
+		}
+			courseList.clear();
+			FiledownAsynctask filedownAsynctask = new FiledownAsynctask();
+			filedownAsynctask.execute(JSONPATH,LOCALPATH);
 	}
 	
 	private void initgridview(View inflate) {
@@ -304,6 +306,7 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 				try {
 					JSONArray jsonArray = new JSONArray(result);
 					new CourseInfo().readJsonArray(jsonArray, courseList);
+					Log.e("courselist", courseList.toString());
 					hasNet = true;
 					mCourseAdapter.notifyDataSetChanged();
 					courseListLocal.clear();
@@ -384,13 +387,14 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 //			HashCodeFileNameGenerator generator = new HashCodeFileNameGenerator();
 			//TODO 打log时发现第一张图片被多次加载,全部图片被加载2次
 			
-			//TODO 如果是无图模式,计算文件名,判断文件是否存在,若存在才加载,不存在则不下载
 //			//使用UIL异步加载图片
 //			imageLoader.displayImage(imagePath, imageView, UilUtil.options, null);
-			UilUtil.loadimg(imagePath, imageView, null, null);
+			// 如果是WIFI模式,计算文件名,判断文件是否存在,若存在才加载,不存在则不下载
+			UilUtil.loadimg(getActivity(),imagePath, imageView, null, null);
 			return inflate;
 		}}
 	public void refresh() {
+		JSONPATH = "http://cpduobei.qiniudn.com/newcourse/newcourse1.txt";
 		filedownload();
 	}
 	@Override

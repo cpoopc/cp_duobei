@@ -17,6 +17,7 @@ import com.cp.duobei.activity.MainActivity;
 import com.cp.duobei.dao.Constant;
 import com.cp.duobei.dao.CourseInfo;
 import com.cp.duobei.fragment.AbstractFragment;
+import com.cp.duobei.utils.ConnectiveUtils;
 import com.cp.duobei.utils.UilUtil;
 
 import android.content.Intent;
@@ -46,6 +47,7 @@ import android.widget.Toast;
 import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.FileUtil;
 import com.example.ex.LogUtils;
+import com.example.ex.ToastUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.umeng.analytics.MobclickAgent;
 public class PickCourseFragment extends AbstractFragment implements OnRefreshListener {
@@ -117,6 +119,10 @@ public class PickCourseFragment extends AbstractFragment implements OnRefreshLis
 		}
 	}
 	private void filedownload() {
+		if(!ConnectiveUtils.isConnected(getActivity())){
+			ToastUtils.showToast(getActivity(), Constant.CONNECT_ERRO);
+			return ;
+		}
 		courseList.clear();
 		FiledownAsynctask filedownAsynctask = new FiledownAsynctask();
 		filedownAsynctask.execute(JSONPATH_PICK,LOCALPATH_PICK);
@@ -236,7 +242,7 @@ public class PickCourseFragment extends AbstractFragment implements OnRefreshLis
 			String imagePath = courseInfo.getImagepath();
 			//使用UIL异步加载图片
 //			imageLoader.displayImage(imagePath, imageView, UilUtil.options, null);
-			UilUtil.loadimg(imagePath, imageView, null, null);
+			UilUtil.loadimg(getActivity(),imagePath, imageView, null, null);
 			return inflate;
 		}}
 	public void refresh() {

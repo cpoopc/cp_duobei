@@ -19,10 +19,12 @@ import com.cp.duobei.dao.RecentlyInfo;
 import com.cp.duobei.fragment.AbstractFragment;
 import com.cp.duobei.fragment.home.RecentlyFragment.RecentlyAdapter;
 import com.cp.duobei.fragment.home.RecentlyFragment.RecentlyAdapter.ViewHolder;
+import com.cp.duobei.utils.ConnectiveUtils;
 import com.cp.duobei.utils.UilUtil;
 import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.FileUtil;
 import com.example.ex.LogUtils;
+import com.example.ex.ToastUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.umeng.analytics.MobclickAgent;
 
@@ -72,10 +74,18 @@ public class DailyRecFragment extends AbstractFragment implements OnRefreshListe
 		View layout = inflater.inflate(R.layout.fragment_dailyrec, null);
 		 pulltoreflash(layout);
 		 readfromlocal(LOCALPATH_DAILY,LOCALPATH_REC);
+		 filedownload();
+		 initlistview(layout);
+		return layout;
+	}
+
+	private void filedownload() {
+		if(!ConnectiveUtils.isConnected(getActivity())){
+			ToastUtils.showToast(getActivity(), Constant.CONNECT_ERRO);
+			return ;
+		}
 		filedownload_daily();
 		filedownload_rec();
-		initlistview(layout);
-		return layout;
 	}
 	private void initlistview(View layout) {
 		ListView mListView = (ListView) layout.findViewById(R.id.lv_fragment_dailyrec);
@@ -274,7 +284,7 @@ public class DailyRecFragment extends AbstractFragment implements OnRefreshListe
 				holder.tv_author.setText(info.author);
 				holder.tv_good.setText(info.good);
 //				imageLoader.displayImage(info.imagepath, holder.img_title, UilUtil.options, null);
-				UilUtil.loadimg(info.imagepath, holder.img_title, null, null);
+				UilUtil.loadimg(getActivity(),info.imagepath, holder.img_title, null, null);
 			}else if(getItemViewType(position)==1){
 				TextView textView = new TextView(getActivity());
 				textView.setText("近期更新");
@@ -358,8 +368,7 @@ public class DailyRecFragment extends AbstractFragment implements OnRefreshListe
 //		}
 //	}
 	public void refresh() {
-		filedownload_daily();
-		filedownload_rec();
+		filedownload();
 	}
 	@Override
 	public void onRefreshStarted(View view) {

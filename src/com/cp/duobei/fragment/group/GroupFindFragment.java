@@ -15,12 +15,14 @@ import com.cp.duobei.R;
 import com.cp.duobei.dao.Constant;
 import com.cp.duobei.dao.GroupInfo;
 import com.cp.duobei.fragment.AbstractFragment;
+import com.cp.duobei.utils.ConnectiveUtils;
 import com.cp.duobei.utils.UilUtil;
 import com.cp.duobei.widget.XListView;
 import com.cp.duobei.widget.XListView.IXListViewListener;
 import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.FileUtil;
 import com.example.ex.LogUtils;
+import com.example.ex.ToastUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.umeng.analytics.MobclickAgent;
 
@@ -91,6 +93,10 @@ public class GroupFindFragment extends AbstractFragment implements OnRefreshList
                  .setup(mPullToRefreshLayout);
 	}
 	private void filedownload() {
+		if(!ConnectiveUtils.isConnected(getActivity())){
+			ToastUtils.showToast(getActivity(), Constant.CONNECT_ERRO);
+			return ;
+		}
 		groupList.clear();
 		page  = 1;
 		FiledownTask filedowTask = new FiledownTask();
@@ -162,7 +168,8 @@ public class GroupFindFragment extends AbstractFragment implements OnRefreshList
 			}else{
 				info = groupListLocal.get(position);
 			}
-			imageLoader.displayImage(info.imagepath, holder.img_pic, UilUtil.options);
+			UilUtil.loadimg(getActivity(), info.imagepath, holder.img_pic, null, null);
+//			imageLoader.displayImage(info.imagepath, holder.img_pic, UilUtil.options);
 			holder.tv_title.setText(info.title);
 			holder.tv_members.setText(info.members);
 			holder.tv_introduce.setText(info.introduce);

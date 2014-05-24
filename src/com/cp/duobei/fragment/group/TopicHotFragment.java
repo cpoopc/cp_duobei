@@ -16,11 +16,13 @@ import com.cp.duobei.activity.PostDetailActivity;
 import com.cp.duobei.dao.Constant;
 import com.cp.duobei.dao.RecentlyInfo;
 import com.cp.duobei.fragment.AbstractFragment;
+import com.cp.duobei.utils.ConnectiveUtils;
 import com.cp.duobei.widget.XListView;
 import com.cp.duobei.widget.XListView.IXListViewListener;
 import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.FileUtil;
 import com.example.ex.LogUtils;
+import com.example.ex.ToastUtils;
 import com.umeng.analytics.MobclickAgent;
 
 import android.content.Intent;
@@ -73,10 +75,14 @@ public class TopicHotFragment extends AbstractFragment implements IXListViewList
 			Bundle savedInstanceState) {
 		View layout = inflater.inflate(R.layout.fragment_topic_hot, container, false);
 		readfromlocal(LOCALPATH);
-		if(tieziList.size()==0){
-			page = 1;
-			filedownload(JSONPATH,LOCALPATH);
-		};
+		if(!ConnectiveUtils.isConnected(getActivity())){
+			ToastUtils.showToast(getActivity(), Constant.CONNECT_ERRO);
+		}else{
+			if(tieziList.size()==0){
+				page = 1;
+				filedownload(JSONPATH,LOCALPATH);
+			};
+		}
 		pulltoreflash(layout);
 		initListview(layout);
 		return layout;
@@ -217,6 +223,10 @@ public class TopicHotFragment extends AbstractFragment implements IXListViewList
 	}
 	@Override
 	public void onLoadMore() {
+		if(!ConnectiveUtils.isConnected(getActivity())){
+			ToastUtils.showToast(getActivity(), Constant.CONNECT_ERRO);
+			return ;
+		}
 		filedownload(JSONPATH,null);
 	}
 	@Override
@@ -251,6 +261,10 @@ public class TopicHotFragment extends AbstractFragment implements IXListViewList
 	}
 	@Override
 	public void refresh() {
+		if(!ConnectiveUtils.isConnected(getActivity())){
+			ToastUtils.showToast(getActivity(), Constant.CONNECT_ERRO);
+			return ;
+		}
 		tieziList.clear();
 		page = 1;
 		filedownload(JSONPATH,LOCALPATH);

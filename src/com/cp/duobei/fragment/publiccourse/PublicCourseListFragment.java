@@ -13,10 +13,12 @@ import com.cp.duobei.dao.Constant;
 import com.cp.duobei.dao.CourseRecInfo;
 import com.cp.duobei.fragment.AbstractFragment;
 import com.cp.duobei.fragment.home.DailyRecFragment;
+import com.cp.duobei.utils.ConnectiveUtils;
 import com.cp.duobei.utils.UilUtil;
 import com.example.ex.AbstractExAdapter;
 import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.LogUtils;
+import com.example.ex.ToastUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.umeng.analytics.MobclickAgent;
 
@@ -79,6 +81,10 @@ public class PublicCourseListFragment extends AbstractFragment implements OnChil
 		mListView.setAdapter(adapter2);
 	}
 	private void filedownload(String url) {
+		if(!ConnectiveUtils.isConnected(getActivity())){
+			ToastUtils.showToast(getActivity(), Constant.CONNECT_ERRO);
+			return ;
+		}
 //		publiccourseList.clear();
 		FiledownTask filedowTask = new FiledownTask();
 		filedowTask.execute(url);//下载
@@ -242,7 +248,8 @@ public class PublicCourseListFragment extends AbstractFragment implements OnChil
 			holder.tv_title.setText(info.title);
 			holder.tv_author.setText(info.author);
 			holder.tv_good.setText(info.good);
-			imageLoader.displayImage(info.imagepath, holder.img_title, UilUtil.options, null);
+			UilUtil.loadimg(getActivity(), info.imagepath,  holder.img_title, null, null);
+//			imageLoader.displayImage(info.imagepath, holder.img_title, UilUtil.options, null);
 			return layout;
 		}}
 	@Override
