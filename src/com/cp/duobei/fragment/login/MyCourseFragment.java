@@ -3,35 +3,30 @@ package com.cp.duobei.fragment.login;
 
 import java.util.ArrayList;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarsherlock.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
-
-import com.actionbarsherlock.app.SherlockFragment;
 import com.cp.duobei.R;
+import com.cp.duobei.activity.CourseDetailActivity;
 import com.cp.duobei.dao.Constant;
 import com.cp.duobei.dao.CourseInfo;
-import com.cp.duobei.dao.CourseRecInfo;
 import com.cp.duobei.fragment.AbstractFragment;
-import com.cp.duobei.utils.SqlUtils;
+import com.cp.duobei.utils.DbManager;
 import com.cp.duobei.utils.UilUtil;
-import com.example.ex.AbstractFileAsynctask;
-import com.example.ex.FileUtil;
-import com.example.ex.LogUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.umeng.analytics.MobclickAgent;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -40,17 +35,25 @@ import android.widget.Toast;
 
 public class MyCourseFragment extends AbstractFragment implements OnRefreshListener {
 	//文件下载+数据持久化
-	private boolean hasNet;
-	private String JSONPATH = Constant.JSON_MYCOURSE;
-	private String LOCALPATH = Constant.STORE_PATH+"/mycourse.txt";
+	private String username;
 	//容器+listview+Adapter
-	ArrayList<CourseRecInfo> courserecList = new ArrayList<CourseRecInfo>();
-	ArrayList<CourseRecInfo> courserecListLocal = new ArrayList<CourseRecInfo>();
 	private DailyrecAdapter adapter;
 	//uil
 	private ImageLoader imageLoader = ImageLoader.getInstance();
 	//下拉刷新
 	private PullToRefreshLayout mPullToRefreshLayout;
+	
+	ArrayList<MycourseInfo> mycourseList = new ArrayList<MycourseInfo>();
+	class MycourseInfo{
+		String coursetitle;
+		String imagepath;
+		public MycourseInfo(String coursetitle, String imagepath) {
+			super();
+			this.coursetitle = coursetitle;
+			this.imagepath = imagepath;
+		}
+		
+	}
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -65,14 +68,34 @@ public class MyCourseFragment extends AbstractFragment implements OnRefreshListe
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		SharedPreferences sp = getActivity().getSharedPreferences("userinfo", 0);
+		username = sp.getString("username", "");
+		readfromlocaldb();
 		View layout = inflater.inflate(R.layout.fragment_dailyrec, null);
 		 pulltoreflash(layout);
-		 readfromlocal(LOCALPATH);
-		filedownload();
+		initListview(layout);
+		return layout;
+	}
+
+	private void initListview(View layout) {
 		ListView mListView = (ListView) layout.findViewById(R.id.lv_fragment_dailyrec);
+		mListView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Intent intent = new Intent(getActivity(),CourseDetailActivity.class);
+				MycourseInfo courseInfo = mycourseList.get(position);
+				intent.putExtra("imagepath", courseInfo.imagepath);
+				intent.putExtra("title", courseInfo.coursetitle);
+				//CP 暂用
+				intent.putExtra("json_lesson_path", Constant.LESSONINFO_BASE);
+				Toast.makeText(getActivity(), "position"+position, Toast.LENGTH_SHORT).show();
+				startActivity(intent);
+			}
+		});
 		adapter = new DailyrecAdapter();
 		mListView.setAdapter(adapter);
-		return layout;
 	}
 	private void pulltoreflash(View layout) {
 		mPullToRefreshLayout = (PullToRefreshLayout) layout.findViewById(R.id.fragment_pulltoreflash_dailyrec);
@@ -81,61 +104,25 @@ public class MyCourseFragment extends AbstractFragment implements OnRefreshListe
                  .listener(this)
                  .setup(mPullToRefreshLayout);
 	}
-	private void filedownload() {
-		courserecList.clear();
-		FiledownTask filedowTask = new FiledownTask();
-		filedowTask.execute(JSONPATH,LOCALPATH);//下载
-	}
-	//本地读取缓存
-	private void readfromlocal(String filepath){
-//		long start = System.currentTimeMillis();
-		hasNet = false;
-		if(courserecListLocal.size()==0){
-			//把文件读取成utf-8格式的String
-			String jsonstr  = FileUtil.file2string(filepath);
-			if(jsonstr!=null){
-				JSONArray jsonArray;
-				try {
-					jsonArray = new JSONArray(jsonstr);
-					CourseRecInfo info = new CourseRecInfo();
-					info.readJsonArray(jsonArray, courserecListLocal);
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
+	private void readfromlocaldb(){
+		if(username!=null){
+			Cursor query = DbManager.getInstance(getActivity()).query("mycourse", "username=?", new String[]{username});
+			boolean toFirst = query.moveToFirst();
+			while(toFirst){
+				String coursetitle = query.getString(query.getColumnIndex("coursetitle"));
+				String imagepath = query.getString(query.getColumnIndex("imagepath"));
+				mycourseList.add(new MycourseInfo(coursetitle, imagepath));
+				toFirst = query.moveToNext();
 			}
-		}
-//		long stop = System.currentTimeMillis();
-//		LogUtils.e("readfromlocal: useTime", (stop-start)+"毫秒");
-	}
-	class FiledownTask extends AbstractFileAsynctask{
-		@Override
-		protected void onPostExecute(String result) {
-			if(result==null){
-				LogUtils.e("MycourseFragment", "json下载失败");
-			}else{
-				try { 
-					JSONArray jsonArray = new JSONArray(result);
-					new CourseRecInfo().readJsonArray(jsonArray, courserecList);
-					hasNet = true;
-					if(adapter!=null){
-						adapter.notifyDataSetChanged();
-					}
-					courserecListLocal.clear();
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-				
+			if(adapter!=null){
+				adapter.notifyDataSetChanged();
 			}
-			super.onPostExecute(result);
 		}
 	}
 	class DailyrecAdapter extends BaseAdapter{
 		@Override
 		public int getCount() {
-			if(hasNet){
-				return courserecList.size();
-			}
-			return courserecListLocal.size();
+			return mycourseList.size();
 		}
 
 		@Override
@@ -149,8 +136,6 @@ public class MyCourseFragment extends AbstractFragment implements OnRefreshListe
 		}
 		class ViewHolder{
 			TextView tv_title;
-			TextView tv_author;
-			TextView tv_good;
 			ImageView img_title;
 		}
 		@Override
@@ -161,29 +146,21 @@ public class MyCourseFragment extends AbstractFragment implements OnRefreshListe
 				layout = convertView;
 				holder = (ViewHolder) layout.getTag();
 			}else{
-				layout = getActivity().getLayoutInflater().inflate(R.layout.listview_item_courserec, null);
+				layout = getActivity().getLayoutInflater().inflate(R.layout.listview_item_mycourse, null);
 				holder= new ViewHolder();
 				holder.tv_title = (TextView) layout.findViewById(R.id.tv_courserec_title);
-				holder.tv_author = (TextView) layout.findViewById(R.id.tv_courserec_author);
-				holder.tv_good = (TextView) layout.findViewById(R.id.tv_courserec_good);
 				holder.img_title = (ImageView) layout.findViewById(R.id.img_courserec_title);
 				layout.setTag(holder);
 			}
-			CourseRecInfo info;
-			if(hasNet){
-				info = courserecList.get(position);
-			}else{
-				info = courserecListLocal.get(position);
-			}
-			holder.tv_title.setText(info.title);
-			holder.tv_author.setText(info.author);
-			holder.tv_good.setText(info.good);
+			MycourseInfo info;
+				info = mycourseList.get(position);
+			holder.tv_title.setText(info.coursetitle);
 			imageLoader.displayImage(info.imagepath, holder.img_title, UilUtil.options, null);
 //			LogUtils.e("DailyRec", "info.imagepath"+info.imagepath);
 			return layout;
 		}}
 	public void reflash() {
-		filedownload();
+		readfromlocaldb();
 	}
 	@Override
 	public void onRefreshStarted(View view) {
@@ -212,7 +189,7 @@ public class MyCourseFragment extends AbstractFragment implements OnRefreshListe
 	@Override
 	public void refresh() {
 		Toast.makeText(getActivity(), "刷新我的课表", 0).show();
-		filedownload();
+		readfromlocaldb();
 	}
 	
 }

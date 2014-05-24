@@ -83,11 +83,6 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		MobclickAgent.openActivityDurationTrack(false);
 		initContentview();
 		initMenuview();
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-//		SharedPreferences sp = getSharedPreferences("com.cp.duobei_preferences.xml", 0);
-		boolean iswifimode = sp.getBoolean("key_wifi", false);
-		Log.e("iswifimode", iswifimode+"");
-//		Log.e("iswifimode", MeApplication.getInstance().iswifimode+"");
 	}
 	/**
 	 * 主界面初始化
@@ -122,11 +117,14 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		int images[] = new int[]{R.drawable.ic_menu_login,R.drawable.ic_menu_home,
 				R.drawable.ic_menu_group,R.drawable.ic_menu_public,R.drawable.ic_menu_setting};
 		/**用户登陆判断**/
-		SharedPreferences sp = getPreferences(MODE_PRIVATE);
+//		SharedPreferences sp = getPreferences(MODE_PRIVATE);
+		SharedPreferences sp = getSharedPreferences("userinfo", 0);
 		//自动登陆
 		autologin = sp.getBoolean("autologin", false);
 		if(autologin){
 			username = sp.getString("username", "cpoopc");
+		}else{
+			sp.edit().putString("username", "").commit();
 		}
 		//用户名
 		if(username!=null){

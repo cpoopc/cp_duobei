@@ -54,4 +54,5 @@ public interface Constant {
 //         ThemeManager.modify(ThemeManager.FULLSCREEN);
 //     }
 	String CONNECT_ERRO = "网络连接异常!";
+	String  LESSONINFO_BASE= "http://cpduobei.qiniudn.com/lessoninfo/";
 }

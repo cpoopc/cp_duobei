@@ -18,7 +18,8 @@ public class VideoActivity extends Activity {
 //		MediaController mediaCrl = (MediaController) findViewById(R.id.mediaController1);
 		MediaController mediaCrl = new MediaController(this, true);
 		videoView.setMediaController(mediaCrl);
-		videoView.setVideoPath("android.resource://com.cp.duobei/raw/videoviewdemo");
+//		videoView.setVideoPath("android.resource://com.cp.duobei/raw/videoviewdemo");
+		videoView.setVideoPath("http://cpduobei.qiniudn.com/fangshengongju_hd.mp4");
 		videoView.start();
 	}
 

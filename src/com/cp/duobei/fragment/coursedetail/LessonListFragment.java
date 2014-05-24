@@ -8,22 +8,30 @@ import org.json.JSONException;
 import com.cp.duobei.R;
 import com.cp.duobei.activity.VideoActivity;
 import com.cp.duobei.dao.LessonInfo;
+import com.cp.duobei.utils.ConnectiveUtils;
+import com.cp.duobei.utils.DbManager;
 import com.cp.duobei.utils.SqlUtils;
 import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.LogUtils;
+import com.example.ex.ToastUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,8 +43,6 @@ import android.widget.TextView;
 public class LessonListFragment extends Fragment {
 
 	private ListView mListView;
-	//TODO 从外界传来
-//	private  String JSON_URL = "http://192.168.56.101:8080/lessoninfo/suiyuchen.txt";
 	private  String JSON_URL;
 	private ArrayList<LessonInfo> lessoninfoList = new ArrayList<LessonInfo>();
 	private ArrayList<LessonInfo> lessoninfoListLocal = new ArrayList<LessonInfo>();
@@ -81,11 +87,39 @@ public class LessonListFragment extends Fragment {
 		View headview = inflater.inflate(R.layout.listview_headview_courselist, null);
 		TextView tv_title = (TextView) headview.findViewById(R.id.tv_headview_title);
 		ImageView imghead = (ImageView) headview.findViewById(R.id.img_head);
+		initButton(headview);
 		tv_title.setText(lessonname);
 		ImageLoader.getInstance().displayImage(imagepathHead, imghead);
 		mListView.addHeaderView(headview, null, false);
 		mListView.setAdapter(madapter);
 		mListView.setOnItemClickListener(new LessonItemListener());
+	}
+	private void initButton(View headview) {
+		final Button button = (Button) headview.findViewById(R.id.btn_addtomycourse);
+		//TODO 1..登陆状态显示,没登陆则隐藏(或者提示登陆).2.读取数据库,是否在课表内
+		SharedPreferences sp = getActivity().getSharedPreferences("userinfo", 0);
+		final String username = sp.getString("username", "");
+		if("".equals(username)){
+			button.setText("登陆后添加课表");
+		}else{
+			Cursor query = DbManager.getInstance(getActivity()).query("mycourse", "username=? AND coursetitle=?", new String[]{username,lessonname});
+			if(query.moveToFirst()){
+				button.setText("已经添加");
+			}else{
+				button.setText("添加到我的课表");
+				button.setClickable(true);
+				button.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						ToastUtils.showToast(getActivity(), lessonname);
+						DbManager.getInstance(getActivity()).insert("mycourse", username, lessonname,imagepathHead);
+						button.setText("已经添加");
+						button.setClickable(false);
+					}
+				});
+			}
+		}
 	}
 	//本地读取缓存
 	private void readfromlocal(){
@@ -100,7 +134,21 @@ public class LessonListFragment extends Fragment {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-				startActivity(new Intent(getActivity(),VideoActivity.class));
+				if(ConnectiveUtils.isWIFI(getActivity())){
+					startActivity(new Intent(getActivity(),VideoActivity.class));
+				}else{
+					new AlertDialog.Builder(getActivity()).setTitle("提示")
+					.setMessage("建议在WIFI环境下观看!")
+					.setPositiveButton("仍然播放", new android.content.DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							startActivity(new Intent(getActivity(),VideoActivity.class));
+						}
+					})
+					.setNegativeButton("取消", null)
+					.create().show();
+				}
 		}}
 	class FiledownTask extends AbstractFileAsynctask{
 		@Override

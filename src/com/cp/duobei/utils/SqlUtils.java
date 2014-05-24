@@ -29,6 +29,8 @@ public class SqlUtils extends SQLiteOpenHelper {
 		//user
 		String sql5 = "CREATE TABLE user(username VARCHAR(20) PRIMARY KEY,password VARCHAR(20))";
 		db.execSQL(sql5);
+		//用户名,课表
+		db.execSQL("CREATE TABLE mycourse(username VARCHAR(20),coursetitle VARCHAR(40),imagepath VARCHAR(100))");
 	}
 	
 	@Override

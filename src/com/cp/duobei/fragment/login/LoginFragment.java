@@ -3,6 +3,7 @@ package com.cp.duobei.fragment.login;
 import com.cp.duobei.R;
 import com.cp.duobei.activity.MainActivity;
 import com.cp.duobei.fragment.AbstractFragment;
+import com.cp.duobei.utils.DbManager;
 import com.cp.duobei.utils.SqlUtils;
 import com.umeng.analytics.MobclickAgent;
 
@@ -49,8 +50,9 @@ public class LoginFragment extends AbstractFragment implements OnClickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		//连接用户数据库
-		SqlUtils sqlUtils = new SqlUtils(getActivity());
-		mDB = sqlUtils.getReadableDatabase();
+//		SqlUtils sqlUtils = new SqlUtils(getActivity());
+//		mDB = sqlUtils.getReadableDatabase();
+		mDB = DbManager.getInstance(getActivity()).getDB();
 	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,7 +74,8 @@ public class LoginFragment extends AbstractFragment implements OnClickListener {
 			if(query.moveToFirst()){
 				if(ed_password.getText().toString().trim().equals(query.getString(query.getColumnIndex("password")))){
 					Toast.makeText(getActivity(), "登陆成功", 0).show();
-					SharedPreferences sp = getActivity().getPreferences(Context.MODE_PRIVATE);
+					SharedPreferences sp = getActivity().getSharedPreferences("userinfo", 0);
+//					SharedPreferences sp = getActivity().getPreferences(Context.MODE_PRIVATE);
 					Editor edit = sp.edit();
 					edit.putBoolean("autologin", mCheckBox.isChecked());
 					edit.putString("username", username);

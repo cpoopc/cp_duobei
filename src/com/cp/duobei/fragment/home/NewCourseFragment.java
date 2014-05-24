@@ -306,7 +306,6 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 				try {
 					JSONArray jsonArray = new JSONArray(result);
 					new CourseInfo().readJsonArray(jsonArray, courseList);
-					Log.e("courselist", courseList.toString());
 					hasNet = true;
 					mCourseAdapter.notifyDataSetChanged();
 					courseListLocal.clear();
@@ -385,7 +384,7 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 			author.setText(courseInfo.getAuthor());
 			String imagePath = courseInfo.getImagepath();
 //			HashCodeFileNameGenerator generator = new HashCodeFileNameGenerator();
-			//TODO 打log时发现第一张图片被多次加载,全部图片被加载2次
+			//FIXME 打log时发现第一张图片被多次加载,全部图片被加载2次
 			
 //			//使用UIL异步加载图片
 //			imageLoader.displayImage(imagePath, imageView, UilUtil.options, null);

@@ -6,6 +6,8 @@ import com.cp.duobei.activity.MainActivity;
 import com.cp.duobei.fragment.AbstractFragment;
 import com.umeng.analytics.MobclickAgent;
 
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -46,8 +48,13 @@ public class MyInfoFragment extends AbstractFragment implements OnClickListener 
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_logout:
-			Toast.makeText(getActivity(), "tuichu", 0).show();
+			Toast.makeText(getActivity(), "退出", 0).show();
 			FragmentActivity activity = getActivity();
+			SharedPreferences sp = getActivity().getSharedPreferences("userinfo", 0);
+			Editor edit = sp.edit();
+			edit.putString("username", "");
+			edit.putBoolean("autologin", false);
+			edit.commit();
 			if(activity instanceof MainActivity){
 				((MainActivity) activity).setLoginedFragment(null);
 			}
