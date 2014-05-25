@@ -1,5 +1,7 @@
 package com.cp.duobei.activity;
 
+import java.util.ArrayList;
+
 import net.simonvt.menudrawer.MenuDrawer;
 import net.simonvt.menudrawer.MenuDrawer.Type;
 
@@ -10,7 +12,6 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -23,10 +24,11 @@ import android.widget.Toast;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Color;
+import android.database.Cursor;
 
 import com.cp.duobei.R;
 import com.cp.duobei.activity.SettingAdapter;
+import com.cp.duobei.dao.Constant;
 import com.cp.duobei.fragment.group.GroupFindFragment;
 import com.cp.duobei.fragment.group.TopicHotFragment;
 import com.cp.duobei.fragment.home.DailyRecFragment;
@@ -39,6 +41,10 @@ import com.cp.duobei.fragment.login.MyCourseFragment;
 import com.cp.duobei.fragment.login.MyInfoFragment;
 import com.cp.duobei.fragment.login.RegistFragment;
 import com.cp.duobei.fragment.publiccourse.PublicCourseListFragment;
+import com.cp.duobei.utils.DbManager;
+import com.cp.duobei.utils.SuggestionsAdapter;
+import com.example.ex.LogUtils;
+import com.example.ex.ToastUtils;
 import com.umeng.analytics.MobclickAgent;
 
 /**
@@ -59,9 +65,11 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 	private static final int MENU_SETTING = 4;
 	private HomeFragment mhomeFragment;
 	private boolean autologin;
-	private String username = null;//用户名以及登陆状态
+	private String username = "";//用户名以及登陆状态
 	private SettingAdapter settingAdapter;
 	private FragmentManager fm;
+    private SuggestionsAdapter msuggestionsAdapter;
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -127,7 +135,7 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 			sp.edit().putString("username", "").commit();
 		}
 		//用户名
-		if(username!=null){
+		if(username!=null && !"".equals(username)){
 			mTitle[0] = username;
 		}
 		settingAdapter = new SettingAdapter(this,mTitle,images);
@@ -174,13 +182,28 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
  * actionbar搜索接口
 *	
  */
+	private ArrayList<String> resultList = new ArrayList<String>();
 	private void initSearch(Menu menu) {
-		//TODO
 		//Create the search view
-		SearchView searchView = new SearchView(getSupportActionBar().getThemedContext());
+		final SearchView searchView = new SearchView(getSupportActionBar().getThemedContext());
         searchView.setQueryHint("查找课表");
-        searchView.setOnQueryTextListener(this);
+        searchView.setOnQueryTextListener(this);//CP
         searchView.setOnSuggestionListener(this);
+        new Thread(new Runnable() {
+			@Override
+			public void run() {
+				//耗时操作
+				Cursor query = DbManager.getInstance(MainActivity.this).query("mycourse", "username=?", new String[]{username});
+				Log.e("initSearch", "initSearch");
+				msuggestionsAdapter = new SuggestionsAdapter(MainActivity.this, query);
+				msuggestionsAdapter.setResultList(resultList);
+				runOnUiThread(new Runnable() {
+					public void run() {
+						searchView.setSuggestionsAdapter(msuggestionsAdapter);
+					}
+				});
+			}
+		}).start();
         menu.add("Search")
             .setIcon(R.drawable.abs__ic_search)
             .setActionView(searchView)
@@ -189,26 +212,43 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 
 	@Override
 	public boolean onSuggestionSelect(int position) {
-		// TODO Auto-generated method stub
-		return false;
+		Log.e("onSuggestionSelect", "position:"+position);
+		return true;
 	}
 
 	@Override
 	public boolean onSuggestionClick(int position) {
-		// TODO Auto-generated method stub
-		return false;
+		//点击跳转到课程详情
+		String coursetitle = resultList.get(position);
+		Cursor query = DbManager.getInstance(this).query("mycourse", "coursetitle=?", new String[]{coursetitle});
+		query.moveToFirst();
+		String imagepath = query.getString(query.getColumnIndex("imagepath"));
+		Log.e("onSuggestionClick", "position:"+position+resultList.get(position));
+		Intent intent = new Intent(this,CourseDetailActivity.class);
+		intent.putExtra("imagepath", imagepath);
+		intent.putExtra("title", coursetitle);
+		//CP 暂用
+		intent.putExtra("json_lesson_path", Constant.LESSONINFO_BASE);
+		startActivity(intent);
+		return true;
 	}
 
 	@Override
 	public boolean onQueryTextSubmit(String query) {
-		// TODO Auto-generated method stub
 		Toast.makeText(MainActivity.this, "查询:"+query, Toast.LENGTH_SHORT).show();
 		return false;
 	}
 
 	@Override
 	public boolean onQueryTextChange(String newText) {
-		return false;
+		if(msuggestionsAdapter==null){
+			ToastUtils.showToast(this, "搜索初始化中,请稍候再试");
+			return false;
+		}
+		msuggestionsAdapter.setUsername(username);
+		msuggestionsAdapter.getFilter().filter(newText);
+		msuggestionsAdapter.notifyDataSetChanged();
+		return true;
 	}
 	/**
 	 * 点击切换fragment
@@ -220,7 +260,7 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		Fragment fragment = null;
 		switch (position) {
 		case MENU_LOGIN:
-			if(username!=null){
+			if(username!=null && !"".equals(username)){
 				mhomeFragment = new HomeFragment();
 				fragment = mhomeFragment;
 				mhomeFragment.addpager("我的课表", new MyCourseFragment());

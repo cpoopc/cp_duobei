@@ -27,6 +27,12 @@ public class DbManager {
 	public SQLiteDatabase getDB(){
 		return mDb;
 	}
+	public Cursor rawquery(String username,String selectionArgs){
+//		mDb.query(table, columns, selectionArgs, selectionArgs, groupBy, having, orderBy)
+		String sql = "SELECT * FROM mycourse WHERE coursetitle LIKE '%"+selectionArgs+"%' AND username='"+username+"'";
+		Cursor query = mDb.rawQuery(sql, null);
+		return query;
+	}
 	public Cursor query(String table,String selection,String[] selectionArgs){
 //		mDb.query(table, columns, selectionArgs, selectionArgs, groupBy, having, orderBy)
 		Cursor query = mDb.query(table, null, selection, selectionArgs, null, null, null); 
