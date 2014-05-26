@@ -1,6 +1,13 @@
 package com.cp.duobei.dao;
 
 import java.io.File;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.cp.duobei.activity.MyApplication;
 
@@ -55,4 +62,21 @@ public interface Constant {
 //     }
 	String CONNECT_ERRO = "网络连接异常!";
 	String  LESSONINFO_BASE= "http://cpduobei.qiniudn.com/lessoninfo/";
+	//解决异步任务阻塞
+	static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
+	static final int CORE_POOL_SIZE = CPU_COUNT + 1;
+	static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
+	static final int KEEP_ALIVE = 1;
+    static final BlockingQueue<Runnable> sPoolWorkQueue =
+            new LinkedBlockingQueue<Runnable>(128);
+    static final ThreadFactory sThreadFactory = new ThreadFactory() {
+    private final AtomicInteger mCount = new AtomicInteger(1);
+
+        public Thread newThread(Runnable r) {
+            return new Thread(r, "AsyncTask #" + mCount.getAndIncrement());
+        }
+    };
+	static final Executor THREAD_POOL_EXECUTOR
+    = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE,
+            TimeUnit.SECONDS, sPoolWorkQueue, sThreadFactory);
 }

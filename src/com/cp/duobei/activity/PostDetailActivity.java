@@ -1,37 +1,33 @@
 package com.cp.duobei.activity;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.cp.duobei.R;
-import com.cp.duobei.R.id;
-import com.cp.duobei.R.layout;
-import com.cp.duobei.R.menu;
 import com.cp.duobei.dao.Constant;
 import com.cp.duobei.dao.PostDetail;
+import com.cp.duobei.utils.HtmlLoader;
 import com.cp.duobei.utils.SwipeBackSherlockActivity;
 import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.LogUtils;
 
-import android.R.integer;
 import android.os.Bundle;
-import android.app.Activity;
 import android.content.Intent;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -61,19 +57,16 @@ public class PostDetailActivity extends SwipeBackSherlockActivity{
 
 		@Override
 		public int getCount() {
-			// TODO Auto-generated method stub
 			return postList.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 		@Override
@@ -96,6 +89,9 @@ public class PostDetailActivity extends SwipeBackSherlockActivity{
 			tv_dateline.setText(info.dateline);
 			Spanned fromHtml = Html.fromHtml(info.message);
 			tv_message.setText(fromHtml);
+			HtmlLoader htmlLoader = new HtmlLoader(PostDetailActivity.this);
+			htmlLoader.setTextview(tv_message);
+			htmlLoader.executeOnExecutor(Constant.THREAD_POOL_EXECUTOR,info.message);
 			return layout;
 		}}
 	ArrayList<PostDetail> postList = new ArrayList<PostDetail>();
@@ -134,8 +130,6 @@ public class PostDetailActivity extends SwipeBackSherlockActivity{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-//				Spanned fromHtml = Html.fromHtml(result);
-//				mTextView.setText(fromHtml);
 			}else{
 				mTextView.setText("请检查网络连接");
 			}

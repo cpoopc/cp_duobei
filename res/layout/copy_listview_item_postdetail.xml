@@ -36,11 +36,4 @@
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-<!--     <WebView -->
-<!--         android:id="@+id/webView1" -->
-<!--         android:layout_width="match_parent" -->
-<!--         android:layout_height="wrap_content" -->
-<!--         android:layout_below="@+id/tv_title" -->
-<!--         android:layout_centerHorizontal="true" /> -->
-
 </RelativeLayout>
