@@ -14,7 +14,7 @@
         <item>公开课</item>
         <item>设置</item>
     </string-array>
-
+	<string name="loading">loading..</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_video">VideoActivity</string>
     <string name="cp">cp</string>

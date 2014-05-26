@@ -7,7 +7,9 @@
     tools:context=".TopicHotFragment" >
 
     <!-- TODO: Update blank fragment layout -->
-
+	<include 
+       android:id="@+id/view_loading"
+       layout="@layout/loading"/>
     <com.cp.duobei.widget.XListView
         android:id="@+id/lv_fragment_topichot"
         android:layout_width="match_parent"

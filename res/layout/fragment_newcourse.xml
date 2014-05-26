@@ -4,6 +4,9 @@
      xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
+<include 
+       android:id="@+id/view_loading"
+       layout="@layout/loading"/>
     <ScrollView  
         android:id="@+id/scrollView1"
         android:layout_width="match_parent"
@@ -14,7 +17,6 @@
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
     <com.cp.duobei.widget.ChildViewPager
         android:id="@+id/fragment_banner_viewpager"
         android:layout_width="match_parent"
