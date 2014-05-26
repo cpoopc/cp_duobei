@@ -261,6 +261,7 @@ public class TopicHotFragment extends AbstractFragment implements IXListViewList
 			long id) {
 		Intent intent = new Intent(getActivity(),PostDetailActivity.class);
 		intent.putExtra("tid", myAdapter.getItem(position-1).tid);
+		intent.putExtra("title", myAdapter.getItem(position-1).title);
 		startActivity(intent);
 	}
 	@Override

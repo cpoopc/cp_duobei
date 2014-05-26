@@ -1,5 +1,6 @@
 package com.cp.duobei.activity;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,9 +22,11 @@ import com.example.ex.LogUtils;
 
 import android.os.Bundle;
 import android.content.Intent;
+import android.graphics.Color;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
@@ -37,19 +40,26 @@ public class PostDetailActivity extends SwipeBackSherlockActivity{
 
 	private TextView mTextView;
 	private MyAdapter myAdapter;
+	SparseArray<SoftReference<View>> cacheViewArray = new SparseArray<SoftReference<View>>();
+	ArrayList<PostDetail> postList = new ArrayList<PostDetail>();
+	private ListView mListView;
+	private View loadinglayout;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_post_detail);
 		ActionBar supportActionBar = getSupportActionBar();
 		supportActionBar.setDisplayHomeAsUpEnabled(true);
-		supportActionBar.setTitle("帖子详情");
 		Intent data = getIntent();
+		String title = data.getStringExtra("title");
+		supportActionBar.setTitle(title);
 		int tid = data.getIntExtra("tid", 0);
 		LogUtils.e("tid", tid+"");
 		FiledownTask filedownTask = new FiledownTask();
 		filedownTask.execute(Constant.POST_DETAIL+tid);
+		loadinglayout = findViewById(R.id.view_loading);
 		mListView = (ListView) findViewById(R.id.lv_postdetail);
+		
 		myAdapter = new MyAdapter();
 		mListView.setAdapter(myAdapter);
 	}
@@ -75,27 +85,45 @@ public class PostDetailActivity extends SwipeBackSherlockActivity{
 		}
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			//保存webview缓存,避免每次都load
+			SoftReference<View> che = cacheViewArray.get(position);
+			if(che!=null){
+				return che.get();
+			}
 			View layout = getLayoutInflater().inflate(R.layout.listview_item_postdetail, null);
+			TextView tv_lou = (TextView) layout.findViewById(R.id.tv_lou);
 			TextView tv_title = (TextView) layout.findViewById(R.id.tv_title);
 			TextView tv_dateline = (TextView) layout.findViewById(R.id.tv_dateline);
-			TextView tv_message = (TextView) layout.findViewById(R.id.tv_message);
+//			TextView tv_message = (TextView) layout.findViewById(R.id.tv_message);
 			PostDetail info = postList.get(position);
 			if(info.first==1){
-				
-				tv_title.setText(position+"楼 楼主 "+info.author);
+//				tv_lou.setTextSize(22);
+				tv_lou.setTextColor(Color.RED);
+				tv_lou.setText("楼主");
+//				tv_title.setTextSize(22);
+				tv_title.setTextColor(Color.RED);
 			}else{
-				tv_title.setText(position+"楼 "+info.author);
+				tv_lou.setText(position+" 楼");
 			}
+			tv_title.setText(info.author);
 			tv_dateline.setText(info.dateline);
-			Spanned fromHtml = Html.fromHtml(info.message);
-			tv_message.setText(fromHtml);
-			HtmlLoader htmlLoader = new HtmlLoader(PostDetailActivity.this);
-			htmlLoader.setTextview(tv_message);
-			htmlLoader.executeOnExecutor(Constant.THREAD_POOL_EXECUTOR,info.message);
+			WebView webView = (WebView) layout.findViewById(R.id.webView1);
+			WebSettings settings = webView.getSettings();
+			settings.setJavaScriptEnabled(false);
+//			webView.lo
+			webView.loadDataWithBaseURL("http://bbs.51cto.com/", info.message,
+					"text/html", "utf-8", null);
+			SoftReference<View> softReference = new SoftReference<View>(layout);
+			cacheViewArray.put(position, softReference);
+//			Spanned fromHtml = Html.fromHtml(info.message);
+//			tv_message.setText(fromHtml);
+//			HtmlLoader htmlLoader = new HtmlLoader(PostDetailActivity.this);
+//			htmlLoader.setTextview(tv_message);
+//			htmlLoader.executeOnExecutor(Constant.THREAD_POOL_EXECUTOR,info.message);
 			return layout;
-		}}
-	ArrayList<PostDetail> postList = new ArrayList<PostDetail>();
-	private ListView mListView;
+		}
+	}
+	
 	class FiledownTask extends AbstractFileAsynctask{
 		@Override
 		protected void onPostExecute(String result) { 
@@ -125,6 +153,7 @@ public class PostDetailActivity extends SwipeBackSherlockActivity{
 					});
 					if(myAdapter!=null){
 						myAdapter.notifyDataSetChanged();
+						loadinglayout.setVisibility(View.GONE);
 					}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block

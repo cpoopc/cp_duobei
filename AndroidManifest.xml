@@ -65,7 +65,8 @@
         </activity>
         <activity
             android:name="com.cp.duobei.activity.PostDetailActivity"
-            android:label="@string/title_activity_post_detail" >
+            android:label="@string/title_activity_post_detail"
+            android:theme="@style/SwipeBack" >
         </activity>
         <activity
             android:name="com.cp.duobei.fragment.login.MyhomeActivity"

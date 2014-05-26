@@ -52,7 +52,8 @@ public interface Constant {
 	String PATH_PUBLICCOURSE = PATH + "/publiccourse";
 	String JSON_PUBLICCOURSE= PATH_PUBLICCOURSE + "/publiccourse.txt";
 	//51cto精华帖和推荐的内容
-	String POST_LIST = "http://bbs.51cto.com/51bbsclient.php?do=rec&page=";
+	String POST_LIST = "http://bbs.51cto.com/51bbsclient.php?do=hot&page=";
+//	String POST_LIST = "http://bbs.51cto.com/51bbsclient.php?do=rec&page=";
 	String POST_DETAIL = "http://bbs.51cto.com/51bbsclient.php?do=threadinfo&tid=";
 	//发现小组
 	String PATH_GROUP = PATH + "/group";
