@@ -46,4 +46,7 @@ public class DbManager {
 		values.put("imagepath", imagepath);
 		mDb.insert(table, null, values );
 	}
+	public void remove(String table, String username, String lessonname) {
+		mDb.delete(table, "username=? AND coursetitle=?", new String[]{username,lessonname});
+	}
 }

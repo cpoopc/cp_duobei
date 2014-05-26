@@ -58,6 +58,7 @@ public class TopicHotFragment extends AbstractFragment implements IXListViewList
 	private boolean hasNet;
 	private String JSONPATH = Constant.POST_LIST;
 	private String LOCALPATH = Constant.STORE_PATH+"/topichot.txt";
+	private View loadinglayout;
 	
 	@Override
 	public void onResume() {
@@ -74,6 +75,7 @@ public class TopicHotFragment extends AbstractFragment implements IXListViewList
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View layout = inflater.inflate(R.layout.fragment_topic_hot, container, false);
+		loadinglayout = layout.findViewById(R.id.view_loading);
 		readfromlocal(LOCALPATH);
 		if(!ConnectiveUtils.isConnected(getActivity())){
 			ToastUtils.showToast(getActivity(), Constant.CONNECT_ERRO);
@@ -156,6 +158,7 @@ public class TopicHotFragment extends AbstractFragment implements IXListViewList
 	class FiledownTask extends AbstractFileAsynctask{
 		@Override
 		protected void onPostExecute(String result) {
+			loadinglayout.setVisibility(View.INVISIBLE);
 			if(result!=null){
 				try {
 					JSONArray jsonArray = new JSONArray(result);
@@ -247,6 +250,7 @@ public class TopicHotFragment extends AbstractFragment implements IXListViewList
             protected void onPostExecute(Void result) {
                 super.onPostExecute(result);
                 // Notify PullToRefreshLayout that the refresh has finished
+                refresh();
                 mPullToRefreshLayout.setRefreshComplete();
             }
         }.execute();
@@ -265,7 +269,9 @@ public class TopicHotFragment extends AbstractFragment implements IXListViewList
 			ToastUtils.showToast(getActivity(), Constant.CONNECT_ERRO);
 			return ;
 		}
+		loadinglayout.setVisibility(View.VISIBLE);
 		tieziList.clear();
+		myAdapter.notifyDataSetChanged();
 		page = 1;
 		filedownload(JSONPATH,LOCALPATH);
 	}

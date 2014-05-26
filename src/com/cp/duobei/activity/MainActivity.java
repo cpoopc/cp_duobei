@@ -165,8 +165,8 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		case android.R.id.home:
 			mDrawer.toggleMenu();
 			break;
-		case R.id.action_refresh:
-			mhomeFragment.refresh();
+//		case R.id.action_refresh:
+//			mhomeFragment.refresh();
 		default:
 			break;
 		}

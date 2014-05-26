@@ -85,6 +85,7 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 		private Runnable runnable;
 		private MainActivity mainActivity;
 		private PagerIndicator mIndicator;
+		private View loadinglayout;
 		@Override
 		public void onResume() {
 			super.onResume();
@@ -99,6 +100,7 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View layout = inflater.inflate(R.layout.fragment_newcourse, null); 
+		loadinglayout = layout.findViewById(R.id.view_loading);
 		pulltoreflash(layout);
 		readfromlocal(LOCALPATH);
 		filedownload();
@@ -247,6 +249,7 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 			//把文件读取成utf-8格式的String
 			String jsonstr  = FileUtil.file2string(filepath);
 			if(jsonstr!=null){
+				loadinglayout.setVisibility(View.INVISIBLE);
 				JSONArray jsonArray;
 				try {
 					jsonArray = new JSONArray(jsonstr);
@@ -315,7 +318,6 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 			}else{
 				LogUtils.e("NewCourseFragment-FiledownLoadTask", "json文件下载失败");
 			}
-			
 			super.onPostExecute(result);
 		}
 	}
@@ -394,6 +396,7 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 		}}
 	public void refresh() {
 		JSONPATH = "http://cpduobei.qiniudn.com/newcourse/newcourse1.txt";
+		mPullToRefreshLayout.setRefreshing(true);
 		filedownload();
 	}
 	@Override
@@ -418,6 +421,6 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
                 mPullToRefreshLayout.setRefreshComplete();
             }
         }.execute();
-		
+//		refresh();
 	}
 }

@@ -105,6 +105,7 @@ public class MyCourseFragment extends AbstractFragment implements OnRefreshListe
                  .setup(mPullToRefreshLayout);
 	}
 	private void readfromlocaldb(){
+		mycourseList.clear();
 		if(username!=null){
 			Cursor query = DbManager.getInstance(getActivity()).query("mycourse", "username=?", new String[]{username});
 			boolean toFirst = query.moveToFirst();

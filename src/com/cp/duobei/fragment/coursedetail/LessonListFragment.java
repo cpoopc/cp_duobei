@@ -95,31 +95,63 @@ public class LessonListFragment extends Fragment {
 		mListView.setOnItemClickListener(new LessonItemListener());
 	}
 	private void initButton(View headview) {
-		final Button button = (Button) headview.findViewById(R.id.btn_addtomycourse);
+		final Button btn_add = (Button) headview.findViewById(R.id.btn_addtomycourse);
+		final Button btn_remove = (Button) headview.findViewById(R.id.btn_removemycourse);
 		//TODO 1..登陆状态显示,没登陆则隐藏(或者提示登陆).2.读取数据库,是否在课表内
 		SharedPreferences sp = getActivity().getSharedPreferences("userinfo", 0);
 		final String username = sp.getString("username", "");
 		if("".equals(username)){
-			button.setText("登陆后添加课表");
+			btn_add.setText("登陆后添加课表");
 		}else{
 			Cursor query = DbManager.getInstance(getActivity()).query("mycourse", "username=? AND coursetitle=?", new String[]{username,lessonname});
 			if(query.moveToFirst()){
-				button.setText("已经添加");
+				//已经添加
+//				btn_add.setClickable(false);
+				removeCourse(btn_add, btn_remove, username);
+				
 			}else{
-				button.setText("添加到我的课表");
-				button.setClickable(true);
-				button.setOnClickListener(new OnClickListener() {
-					
-					@Override
-					public void onClick(View v) {
-						ToastUtils.showToast(getActivity(), lessonname);
-						DbManager.getInstance(getActivity()).insert("mycourse", username, lessonname,imagepathHead);
-						button.setText("已经添加");
-						button.setClickable(false);
-					}
-				});
+				//未添加
+//				btn_remove.setClickable(false);
+				addCourse(btn_add, btn_remove, username);
 			}
 		}
+	}
+	private void addCourse(final Button btn_add, final Button btn_remove,
+			final String username) {
+		btn_remove.setVisibility(View.GONE);
+		btn_add.setText("添加到我的课表");
+		btn_add.setVisibility(View.VISIBLE);
+		btn_add.setClickable(true);
+		btn_add.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				btn_add.setClickable(false);
+				btn_add.setText("已经添加");
+				ToastUtils.showToast(getActivity(), lessonname);
+				DbManager.getInstance(getActivity()).insert("mycourse", username, lessonname,imagepathHead);
+				//CP
+				removeCourse(btn_add, btn_remove, username);
+			}
+		});
+	}
+	private void removeCourse(final Button btn_add, final Button btn_remove,
+			final String username) {
+		btn_add.setVisibility(View.GONE);
+		btn_remove.setText("移除课表");
+		btn_remove.setVisibility(View.VISIBLE);
+		btn_remove.setClickable(true);
+		btn_remove.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				btn_remove.setClickable(false);
+				btn_remove.setText("移除中..");
+				ToastUtils.showToast(getActivity(), lessonname);
+				DbManager.getInstance(getActivity()).remove("mycourse", username, lessonname);
+				addCourse(btn_add, btn_remove, username);
+			}
+		});
 	}
 	//本地读取缓存
 	private void readfromlocal(){
