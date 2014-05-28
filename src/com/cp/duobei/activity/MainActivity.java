@@ -268,8 +268,7 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		msuggestionsAdapter.notifyDataSetChanged();
 		return true;
 	}
-//	SoftReference<HomeFragment> fragmentRef = new SoftReference<HomeFragment>(r)
-	SparseArray<SoftReference<HomeFragment>> fragmentArray = new SparseArray<SoftReference<HomeFragment>>();
+//	SparseArray<SoftReference<HomeFragment>> fragmentArray = new SparseArray<SoftReference<HomeFragment>>();
 	HomeFragment mloginFragment;
 //	HomeFragment mhomeFragment;
 	HomeFragment mgroupFragment;
@@ -287,16 +286,23 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		switch (position) {
 		case MENU_LOGIN:
 			if(username!=null && !"".equals(username)){
-				
-				mhomeFragment = new HomeFragment();
-				fragment = mhomeFragment;
-				mhomeFragment.addpager("我的课表", new MyCourseFragment());
-				mhomeFragment.addpager("我的资料", new MyInfoFragment());
+				if(mloginFragment != null){
+					fragment = mloginFragment;
+					break;
+				}
+				mloginFragment = new HomeFragment();
+				mloginFragment.addpager("我的课表", new MyCourseFragment());
+				mloginFragment.addpager("我的资料", new MyInfoFragment());
+				fragment = mloginFragment;
 			}else{
-				mhomeFragment = new HomeFragment();
-				fragment = mhomeFragment;
-				mhomeFragment.addpager("登陆", new LoginFragment());
-				mhomeFragment.addpager("注册", new RegistFragment());
+				if(mloginFragment != null){
+					fragment = mloginFragment;
+					break;
+				}
+				mloginFragment = new HomeFragment();
+				mloginFragment.addpager("登陆", new LoginFragment());
+				mloginFragment.addpager("注册", new RegistFragment());
+				fragment = mloginFragment;
 			}
 			break;
 		case MENU_HOME:
@@ -318,7 +324,7 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 				mhomeFragment.addpager("每日推荐",new DailyRecFragment());
 				mhomeFragment.addpager("精选课程",new PickCourseFragment());
 				fragment = mhomeFragment;
-				fragmentArray.put(position, new SoftReference<HomeFragment>(mhomeFragment));
+//				fragmentArray.put(position, new SoftReference<HomeFragment>(mhomeFragment));
 			
 			break;
 		case MENU_GROUP:
@@ -457,14 +463,14 @@ public boolean onKeyDown(int keyCode, KeyEvent event) {
 	 */
 	public void setLoginedFragment(String username){
 		this.username = username;
-		mhomeFragment = new HomeFragment();
+		mloginFragment = new HomeFragment();
 		if(username!=null){
-			mhomeFragment.addpager("我的课表", new MyCourseFragment());
-			mhomeFragment.addpager("我的资料", new MyInfoFragment());
+			mloginFragment.addpager("我的课表", new MyCourseFragment());
+			mloginFragment.addpager("我的资料", new MyInfoFragment());
 			settingAdapter.mTitle[0] = username;
 		}else{
-			mhomeFragment.addpager("登陆", new LoginFragment());
-			mhomeFragment.addpager("注册", new RegistFragment());
+			mloginFragment.addpager("登陆", new LoginFragment());
+			mloginFragment.addpager("注册", new RegistFragment());
 			SharedPreferences sp = getPreferences(MODE_PRIVATE);
 			Editor edit = sp.edit();
 			edit.putBoolean("autologin", false);
@@ -473,9 +479,10 @@ public boolean onKeyDown(int keyCode, KeyEvent event) {
 			settingAdapter.mTitle[0] = "登陆";
 		}
 		settingAdapter.notifyDataSetChanged();
-		FragmentManager fm = getSupportFragmentManager();
+//		FragmentManager fm = getSupportFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
-		ft.replace(R.id.container, mhomeFragment);
+		ft.replace(R.id.container, mloginFragment);
+		ft.addToBackStack(null);
 		ft.commit();
 	}
 }
