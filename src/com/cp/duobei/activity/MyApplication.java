@@ -51,7 +51,8 @@ public class MyApplication extends Application {
 //				.diskCacheFileNameGenerator(new Md5FileNameGenerator())
 				//配置保存路径,文件名字生成器
 				.diskCache(new UnlimitedDiscCache(Constant.STORE_PATH_UIL, 
-						new File("/data/data/"+context.getPackageName()+"/uil/"), 
+//						new File("/data/data/"+context.getPackageName()+"/uil/"), 
+						null,
 						new Md5FileNameGenerator()))//使用MD5生成名字,不设则默认为hash(UnlimitedDiscCache父类BaseDiscCache中指定)
 				.tasksProcessingOrder(QueueProcessingType.LIFO)
 //				.memoryCache(memoryCache)

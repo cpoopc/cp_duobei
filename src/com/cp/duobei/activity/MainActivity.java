@@ -1,5 +1,6 @@
 package com.cp.duobei.activity;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 
 import net.simonvt.menudrawer.MenuDrawer;
@@ -12,10 +13,13 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.util.SparseArray;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -69,6 +73,14 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 	private SettingAdapter settingAdapter;
 	private FragmentManager fm;
     private SuggestionsAdapter msuggestionsAdapter;
+    Handler mHandler = new Handler();
+    boolean isExit;
+    private Runnable mRun=new Runnable() {
+    	@Override
+    	public void run() {
+    		isExit=false;
+    	}
+    };
 
 	@Override
 	public void onResume() {
@@ -92,6 +104,11 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		initContentview();
 		initMenuview();
 	}
+	@Override
+	protected void onDestroy() {
+		mHandler.removeCallbacks(mRun);
+		super.onDestroy();
+	}
 	/**
 	 * 主界面初始化
 	 */
@@ -110,6 +127,7 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		mhomeFragment.addpager("每日推荐",new DailyRecFragment());
 		mhomeFragment.addpager("精选课程",new PickCourseFragment());
 		ft.add(R.id.container, mhomeFragment);
+		ft.addToBackStack(null);
 		ft.commit();
 	}
 	/**
@@ -250,6 +268,13 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		msuggestionsAdapter.notifyDataSetChanged();
 		return true;
 	}
+//	SoftReference<HomeFragment> fragmentRef = new SoftReference<HomeFragment>(r)
+	SparseArray<SoftReference<HomeFragment>> fragmentArray = new SparseArray<SoftReference<HomeFragment>>();
+	HomeFragment mloginFragment;
+//	HomeFragment mhomeFragment;
+	HomeFragment mgroupFragment;
+	HomeFragment mcourseFragment;
+	
 	/**
 	 * 点击切换fragment
 	 */
@@ -258,9 +283,11 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 			long id) {
 		
 		Fragment fragment = null;
+		SoftReference<HomeFragment> hehe;
 		switch (position) {
 		case MENU_LOGIN:
 			if(username!=null && !"".equals(username)){
+				
 				mhomeFragment = new HomeFragment();
 				fragment = mhomeFragment;
 				mhomeFragment.addpager("我的课表", new MyCourseFragment());
@@ -273,25 +300,47 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 			}
 			break;
 		case MENU_HOME:
-			mhomeFragment = new HomeFragment();
-			fragment = mhomeFragment;
-			mhomeFragment.addpager("新课速递",new NewCourseFragment());
-			mhomeFragment.addpager("每日推荐",new DailyRecFragment());
-			mhomeFragment.addpager("精选课程",new PickCourseFragment());
+//			 hehe = fragmentArray.get(position);
+//			if( hehe!= null){
+//				mhomeFragment = hehe.get();
+//				if(mhomeFragment != null){
+//					ToastUtils.showToast(MainActivity.this, "mhomeFragment != null");
+//					fragment = mhomeFragment;
+//					break;
+//				}
+//			}
+			if(mhomeFragment != null){
+				fragment = mhomeFragment;
+				break;
+			}
+				mhomeFragment = new HomeFragment();
+				mhomeFragment.addpager("新课速递",new NewCourseFragment());
+				mhomeFragment.addpager("每日推荐",new DailyRecFragment());
+				mhomeFragment.addpager("精选课程",new PickCourseFragment());
+				fragment = mhomeFragment;
+				fragmentArray.put(position, new SoftReference<HomeFragment>(mhomeFragment));
+			
 			break;
 		case MENU_GROUP:
-			mhomeFragment = new HomeFragment();
-			fragment = mhomeFragment;
-			mhomeFragment.addpager("热门话题",new TopicHotFragment());
-			mhomeFragment.addpager("发现小组",new GroupFindFragment());
-//			((HomeFragment)fragment).addpager("", "");
+			if(mgroupFragment !=null){
+				fragment = mgroupFragment;
+				break;
+			}
+			mgroupFragment = new HomeFragment();
+			mgroupFragment.addpager("热门话题",new TopicHotFragment());
+			mgroupFragment.addpager("发现小组",new GroupFindFragment());
+			fragment = mgroupFragment;
 			break;
 		case MENU_COURSE:
-			mhomeFragment = new HomeFragment();
-			fragment = mhomeFragment;
-			mhomeFragment.addpager("发现课程",new PublicCourseListFragment());
-			mhomeFragment.addpager("近期预告",new DailyRecFragment());
-			mhomeFragment.addpager("精选",new RecentlyFragment());
+			if(mcourseFragment !=null){
+				fragment = mcourseFragment;
+				break;
+			}
+			mcourseFragment = new HomeFragment();
+			mcourseFragment.addpager("发现课程",new PublicCourseListFragment());
+			mcourseFragment.addpager("近期预告",new DailyRecFragment());
+			mcourseFragment.addpager("精选",new RecentlyFragment());
+			fragment = mcourseFragment;
 			break;
 		case MENU_SETTING:
 			startActivity(new Intent(this,SettingActivity.class));
@@ -303,10 +352,92 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 //			FragmentManager fm = getSupportFragmentManager();
 			FragmentTransaction ft = fm.beginTransaction();
 			ft.replace(R.id.container, fragment);
+			ft.addToBackStack(null);
 			ft.commit();
 		}
 		mDrawer.closeMenu(true);
+		feleaseOther(position);
 	}
+private void feleaseOther(int position) {
+		
+	}
+
+//	/**
+//	 * 点击切换fragment
+//	 */
+//	@Override
+//	public void onItemClick(AdapterView<?> parent, View view, int position,
+//			long id) {
+//		
+//		Fragment fragment = null;
+//		switch (position) {
+//		case MENU_LOGIN:
+//			if(username!=null && !"".equals(username)){
+//				mhomeFragment = new HomeFragment();
+//				fragment = mhomeFragment;
+//				mhomeFragment.addpager("我的课表", new MyCourseFragment());
+//				mhomeFragment.addpager("我的资料", new MyInfoFragment());
+//			}else{
+//				mhomeFragment = new HomeFragment();
+//				fragment = mhomeFragment;
+//				mhomeFragment.addpager("登陆", new LoginFragment());
+//				mhomeFragment.addpager("注册", new RegistFragment());
+//			}
+//			break;
+//		case MENU_HOME:
+//			mhomeFragment = new HomeFragment();
+//			fragment = mhomeFragment;
+//			mhomeFragment.addpager("新课速递",new NewCourseFragment());
+//			mhomeFragment.addpager("每日推荐",new DailyRecFragment());
+//			mhomeFragment.addpager("精选课程",new PickCourseFragment());
+//			break;
+//		case MENU_GROUP:
+//			mhomeFragment = new HomeFragment();
+//			fragment = mhomeFragment;
+//			mhomeFragment.addpager("热门话题",new TopicHotFragment());
+//			mhomeFragment.addpager("发现小组",new GroupFindFragment());
+////			((HomeFragment)fragment).addpager("", "");
+//			break;
+//		case MENU_COURSE:
+//			mhomeFragment = new HomeFragment();
+//			fragment = mhomeFragment;
+//			mhomeFragment.addpager("发现课程",new PublicCourseListFragment());
+//			mhomeFragment.addpager("近期预告",new DailyRecFragment());
+//			mhomeFragment.addpager("精选",new RecentlyFragment());
+//			break;
+//		case MENU_SETTING:
+//			startActivity(new Intent(this,SettingActivity.class));
+//			break;
+//		default:
+//			break;
+//		}
+//		if(fragment!=null){
+////			FragmentManager fm = getSupportFragmentManager();
+//			FragmentTransaction ft = fm.beginTransaction();
+//			ft.replace(R.id.container, fragment);
+//			ft.addToBackStack(null);
+//			ft.commit();
+//		}
+//		mDrawer.closeMenu(true);
+//	}
+
+//键盘监听事件
+@Override
+public boolean onKeyDown(int keyCode, KeyEvent event) {
+	
+	if (keyCode==KeyEvent.KEYCODE_BACK) {
+		if (isExit) {
+			finish();
+			return true;
+		}
+		isExit=true;
+		Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
+		mHandler.postDelayed(mRun, 3000);
+		return true;
+		
+	}
+	return super.onKeyDown(keyCode, event);
+}
 	/**
 	 * 提供给fragment设置menudrawer触摸模式
 	 */

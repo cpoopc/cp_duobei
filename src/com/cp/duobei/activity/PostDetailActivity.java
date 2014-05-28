@@ -19,6 +19,7 @@ import com.cp.duobei.utils.HtmlLoader;
 import com.cp.duobei.utils.SwipeBackSherlockActivity;
 import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.LogUtils;
+import com.example.ex.ToastUtils;
 
 import android.os.Bundle;
 import android.content.Intent;
@@ -31,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,7 +40,7 @@ import android.widget.Toast;
 
 public class PostDetailActivity extends SwipeBackSherlockActivity{
 
-	private TextView mTextView;
+//	private TextView mTextView;
 	private MyAdapter myAdapter;
 	SparseArray<SoftReference<View>> cacheViewArray = new SparseArray<SoftReference<View>>();
 	ArrayList<PostDetail> postList = new ArrayList<PostDetail>();
@@ -86,9 +88,16 @@ public class PostDetailActivity extends SwipeBackSherlockActivity{
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			//保存webview缓存,避免每次都load
+//			Log.e("position", position+"..:convertView"+convertView);
 			SoftReference<View> che = cacheViewArray.get(position);
 			if(che!=null){
-				return che.get();
+				View  cache = che.get();
+				if(cache!=null){
+					return cache;
+				}else{
+					Log.e("cache", ""+cache);
+					ToastUtils.showToast(PostDetailActivity.this, "null空指针");
+				}
 			}
 			View layout = getLayoutInflater().inflate(R.layout.listview_item_postdetail, null);
 			TextView tv_lou = (TextView) layout.findViewById(R.id.tv_lou);
@@ -160,7 +169,7 @@ public class PostDetailActivity extends SwipeBackSherlockActivity{
 					e.printStackTrace();
 				}
 			}else{
-				mTextView.setText("请检查网络连接");
+				ToastUtils.showToast(PostDetailActivity.this,"请检查网络连接");
 			}
 		}
 	}

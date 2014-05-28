@@ -18,7 +18,11 @@ import android.text.Spanned;
 import android.text.Html.ImageGetter;
 import android.util.Log;
 import android.widget.TextView;
-
+/**
+ * 弃用,textview加载gif
+ * @author cp
+ *
+ */
 public class GifHtmlLoader extends AsyncTask<String, Void, Spanned>{
 	private TextView mtextView;
 	Context context;

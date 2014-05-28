@@ -268,9 +268,10 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 			ToastUtils.showToast(getActivity(), Constant.CONNECT_ERRO);
 			return ;
 		}
-			courseList.clear();
-			FiledownAsynctask filedownAsynctask = new FiledownAsynctask();
-			filedownAsynctask.execute(JSONPATH,LOCALPATH);
+		loadinglayout.setVisibility(View.VISIBLE);
+		courseList.clear();
+		FiledownAsynctask filedownAsynctask = new FiledownAsynctask();
+		filedownAsynctask.execute(JSONPATH,LOCALPATH);
 	}
 	
 	private void initgridview(View inflate) {
@@ -306,16 +307,20 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 		@Override
 		protected void onPostExecute(String result) {
 			if(result!=null){
+				Log.e("下载", result);
 				try {
 					JSONArray jsonArray = new JSONArray(result);
 					new CourseInfo().readJsonArray(jsonArray, courseList);
 					hasNet = true;
+					loadinglayout.setVisibility(View.GONE);
 					mCourseAdapter.notifyDataSetChanged();
 					courseListLocal.clear();
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 			}else{
+				ToastUtils.showToast(getActivity(), "网络异常,请检查网络!");
+				loadinglayout.setVisibility(View.GONE);
 				LogUtils.e("NewCourseFragment-FiledownLoadTask", "json文件下载失败");
 			}
 			super.onPostExecute(result);

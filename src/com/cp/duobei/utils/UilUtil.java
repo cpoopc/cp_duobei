@@ -39,6 +39,7 @@ public class UilUtil {
 				if(!new File(Constant.STORE_PATH_UIL+"/"+generator.generate(uri)).exists()){
 //					imageLoader .displayImage(uri, imageView, options, listener);
 //					LogUtils.e("WIFI模式","没有缓存"); 
+					imageView.setImageResource(R.drawable.ic_duobei);
 					return;
 				}
 //				LogUtils.e("WIFI模式","有缓存");

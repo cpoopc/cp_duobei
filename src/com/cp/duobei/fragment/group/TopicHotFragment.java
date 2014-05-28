@@ -141,6 +141,7 @@ public class TopicHotFragment extends AbstractFragment implements IXListViewList
 	}
 	/**若有传入本地path则下载并保存**/
 	private void filedownload(String url, String lOCALPATH2) {
+		loadinglayout.setVisibility(View.VISIBLE);
 		FiledownTask filedowTask = new FiledownTask();
 		if(lOCALPATH2!=null){
 			filedowTask.execute(url+page,lOCALPATH2);//下载并保存
@@ -158,7 +159,6 @@ public class TopicHotFragment extends AbstractFragment implements IXListViewList
 	class FiledownTask extends AbstractFileAsynctask{
 		@Override
 		protected void onPostExecute(String result) {
-			loadinglayout.setVisibility(View.INVISIBLE);
 			if(result!=null){
 				try {
 					JSONArray jsonArray = new JSONArray(result);
@@ -174,6 +174,7 @@ public class TopicHotFragment extends AbstractFragment implements IXListViewList
 						post.replies= jsonObject.getInt("replies");
 						tieziList.add(post);
 					}
+					loadinglayout.setVisibility(View.INVISIBLE);
 					if(myAdapter!=null){
 						myAdapter.notifyDataSetChanged();
 					}
@@ -183,7 +184,8 @@ public class TopicHotFragment extends AbstractFragment implements IXListViewList
 					e.printStackTrace();
 				}
 			}else{
-				Toast.makeText(getActivity(), "没有了", 0).show();
+				ToastUtils.showToast(getActivity(), "无法继续加载");
+				loadinglayout.setVisibility(View.GONE);
 			}
 			onLoad();
 			super.onPostExecute(result);
