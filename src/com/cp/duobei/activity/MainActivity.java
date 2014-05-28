@@ -464,11 +464,7 @@ public boolean onKeyDown(int keyCode, KeyEvent event) {
 	public void setLoginedFragment(String username){
 		this.username = username;
 		mloginFragment = new HomeFragment();
-		if(username!=null){
-			mloginFragment.addpager("我的课表", new MyCourseFragment());
-			mloginFragment.addpager("我的资料", new MyInfoFragment());
-			settingAdapter.mTitle[0] = username;
-		}else{
+		if(username == null||"".equals(username)){
 			mloginFragment.addpager("登陆", new LoginFragment());
 			mloginFragment.addpager("注册", new RegistFragment());
 			SharedPreferences sp = getPreferences(MODE_PRIVATE);
@@ -476,13 +472,16 @@ public boolean onKeyDown(int keyCode, KeyEvent event) {
 			edit.putBoolean("autologin", false);
 			edit.commit();
 			autologin = false;
-			settingAdapter.mTitle[0] = "登陆";
+			settingAdapter.setTitle0("登陆");
+		}else{
+			mloginFragment.addpager("我的课表", new MyCourseFragment());
+			mloginFragment.addpager("我的资料", new MyInfoFragment());
+			settingAdapter.setTitle0(username);
 		}
-		settingAdapter.notifyDataSetChanged();
-//		FragmentManager fm = getSupportFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
 		ft.replace(R.id.container, mloginFragment);
 		ft.addToBackStack(null);
 		ft.commit();
+		settingAdapter.notifyDataSetChanged();
 	}
 }

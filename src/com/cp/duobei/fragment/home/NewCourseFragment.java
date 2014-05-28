@@ -307,7 +307,6 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 		@Override
 		protected void onPostExecute(String result) {
 			if(result!=null){
-				Log.e("下载", result);
 				try {
 					JSONArray jsonArray = new JSONArray(result);
 					new CourseInfo().readJsonArray(jsonArray, courseList);

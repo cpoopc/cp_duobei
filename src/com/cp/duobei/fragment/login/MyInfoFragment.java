@@ -56,7 +56,7 @@ public class MyInfoFragment extends AbstractFragment implements OnClickListener 
 			edit.putBoolean("autologin", false);
 			edit.commit();
 			if(activity instanceof MainActivity){
-				((MainActivity) activity).setLoginedFragment(null);
+				((MainActivity) activity).setLoginedFragment("");
 			}
 			break;
 
