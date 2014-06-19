@@ -15,8 +15,7 @@ import com.cp.duobei.fragment.AbstractFragment;
 import com.cp.duobei.fragment.home.DailyRecFragment;
 import com.cp.duobei.utils.ConnectiveUtils;
 import com.cp.duobei.utils.UilUtil;
-import com.cp.duobei.widget.XListView;
-import com.cp.duobei.widget.XListView.IXListViewListener;
+import com.cp.duobei.widget.XExpandableListView;
 import com.example.ex.AbstractExAdapter;
 import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.LogUtils;
@@ -28,8 +27,6 @@ import com.umeng.analytics.MobclickAgent;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,19 +39,18 @@ import android.widget.Toast;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.TextView;
 
-public class PublicCourseListFragment extends AbstractFragment implements IXListViewListener,OnChildClickListener {
+public class XExpandableListViewPublicCourseListFragment extends AbstractFragment implements OnChildClickListener {
 
-	private ExpandableListView mExListView;
+	private XExpandableListView mExListView;
 	private MyExAdapter adapter;
 	ArrayList<String> mGroupName = new ArrayList<String>();
 	HashMap<String, ArrayList<String>> mGroupChild = new HashMap<String, ArrayList<String>>();
-	private XListView mListView;
+	private ListView mListView;
 	private boolean hasNet;
 	ArrayList<CourseRecInfo> publiccourseList = new ArrayList<CourseRecInfo>();
 	ArrayList<CourseRecInfo> publiccourseListLocal = new ArrayList<CourseRecInfo>();
 	private PublicCourseAdapter adapter2;
 	ImageLoader imageLoader = ImageLoader.getInstance();
-	private int x;
 	
 	@Override
 	public void onResume() {
@@ -81,11 +77,8 @@ public class PublicCourseListFragment extends AbstractFragment implements IXList
 		return layout;
 	}
 	private void initListview(View layout) {
-		mListView = (XListView) layout.findViewById(R.id.lv_publiccourse);
+		mListView = (ListView) layout.findViewById(R.id.lv_publiccourse);
 		adapter2 = new PublicCourseAdapter();
-		mListView.setPullRefreshEnable(false);
-		mListView.setPullLoadEnable(true);
-		mListView.setXListViewListener(this);
 		mListView.setAdapter(adapter2);
 	}
 	private void filedownload(String url) {
@@ -105,7 +98,7 @@ public class PublicCourseListFragment extends AbstractFragment implements IXList
 			}else{
 				try { 
 					JSONArray jsonArray = new JSONArray(result);
-//					publiccourseList.clear();
+					publiccourseList.clear();
 					new CourseRecInfo().readJsonArray(jsonArray, publiccourseList);
 					hasNet = true;
 					if(adapter2!=null){
@@ -125,7 +118,7 @@ public class PublicCourseListFragment extends AbstractFragment implements IXList
 		}
 	}
 	private void initExListview(View layout) {
-		mExListView = (ExpandableListView) layout.findViewById(R.id.exListView_publiccourse);
+		mExListView = (XExpandableListView) layout.findViewById(R.id.exListView_publiccourse);
 		adapter = new MyExAdapter();
 		mExListView.setAdapter(adapter);
 		mExListView.setOnChildClickListener(this);
@@ -191,8 +184,6 @@ public class PublicCourseListFragment extends AbstractFragment implements IXList
 				boolean isLastChild, View convertView, ViewGroup parent) {
 			TextView textView = new TextView(getActivity());
 			textView.setTextSize(20);
-			textView.setGravity(Gravity.CENTER);
-			textView.setPadding(0, 15, 0, 15);
 			String str = getChild(groupPosition, childPosition);
 			textView.setText(str);
 			return textView;
@@ -203,10 +194,8 @@ public class PublicCourseListFragment extends AbstractFragment implements IXList
 	public boolean onChildClick(ExpandableListView parent, View v,
 			int groupPosition, int childPosition, long id) {
 		String str = adapter.getChild(groupPosition, childPosition);
-//		Toast.makeText(getActivity(), str, 0).show();
-		x++;
-		x %=4;
-		publiccourseList.clear();
+		Toast.makeText(getActivity(), str, 0).show();
+		int x = (int)(Math.random()*4);
 		filedownload(Constant.PATH_PUBLICCOURSE+"/publiccourse"+x+".txt");
 		return false;
 	}
@@ -268,20 +257,5 @@ public class PublicCourseListFragment extends AbstractFragment implements IXList
 	public void refresh() {
 		Toast.makeText(getActivity(), "公开课刷新", 0).show();
 		
-	}
-
-	@Override
-	public void onRefresh() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onLoadMore() {
-		x++;
-		x %=4;
-		filedownload(Constant.PATH_PUBLICCOURSE+"/publiccourse"+x+".txt");
-		mListView.stopLoadMore();
-		mListView.setRefreshTime("刚刚");
 	}
 }

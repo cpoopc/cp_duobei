@@ -26,8 +26,9 @@ public interface Constant {
 	File STORE_PATH = new File(sdPath+"/cp/com.duobei.cp/");
 	File STORE_PATH_UIL = new File(sdPath+"/cp/com.duobei.cp/uil/");
 	//基本地址
-//	String PATH = "http://192.168.56.1:8080/cpdata";
-	String PATH = "http://cpduobei.qiniudn.com";
+//	String PATH = "http://192.168.1.100:8080/cpdata";
+//	String PATH = "http://cpduobei.qiniudn.com";
+	String PATH = "http://cpduobeinew.qiniudn.com";
 	//检查升级地址
 	String PATH_UPDATE = PATH+"/update/update.json";
 	//我的课表

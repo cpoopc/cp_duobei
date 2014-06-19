@@ -1,4 +1,4 @@
-package com.cp.duobei.fragment.home;
+package com.cp.duobei.fragment.publiccourse;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

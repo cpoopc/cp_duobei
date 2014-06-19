@@ -1,4 +1,4 @@
-package com.cp.duobei.fragment.home;
+package com.cp.duobei.fragment.publiccourse;
 
 
 import java.io.FileOutputStream;
@@ -17,8 +17,6 @@ import com.cp.duobei.dao.Constant;
 import com.cp.duobei.dao.CourseRecInfo;
 import com.cp.duobei.dao.RecentlyInfo;
 import com.cp.duobei.fragment.AbstractFragment;
-import com.cp.duobei.fragment.home.RecentlyFragment.RecentlyAdapter;
-import com.cp.duobei.fragment.home.RecentlyFragment.RecentlyAdapter.ViewHolder;
 import com.cp.duobei.utils.UilUtil;
 import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.FileUtil;
@@ -36,7 +34,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class CopyOfDailyRecFragment extends AbstractFragment implements OnRefreshListener {
+public class DailyRecFragment2 extends AbstractFragment implements OnRefreshListener {
 	//文件下载+数据持久化
 	private boolean hasNet;
 	private String JSONPATH_DAILY = Constant.JSON_DAILYREC;
@@ -79,18 +77,10 @@ public class CopyOfDailyRecFragment extends AbstractFragment implements OnRefres
 	}
 	private void initlistview(View layout) {
 		ListView mListView = (ListView) layout.findViewById(R.id.lv_fragment_dailyrec);
-		//嵌套listview
-		View inflate = getActivity().getLayoutInflater().inflate(R.layout.fragment_recently, null);
-		ListView findlistview = (ListView) inflate.findViewById(R.id.lv_fragment_recently);
-		TextView headview_rec = new TextView(getActivity());
-		headview_rec.setText("近期更新");
-		findlistview.addHeaderView(headview_rec);
 		adapterRec = new RecentlyAdapter();
-		findlistview.setAdapter(adapterRec);
 		TextView headview_daily = new TextView(getActivity());
-		headview_daily.setText("每日推荐");
+		headview_daily.setText("近期预告");
 		mListView.addHeaderView(headview_daily);
-		mListView.addFooterView(inflate);
 		adapter = new DailyrecAdapter();
 		mListView.setAdapter(adapter);
 	}

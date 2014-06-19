@@ -1,5 +1,7 @@
 package com.cp.duobei.widget;
 
+import com.cp.duobei.R;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -31,6 +33,7 @@ public class PagerIndicator extends ImageView{
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		for (int i = 0; i < count; i++) {
+//			canvas.drawCircle(cx + i*3*radius, cy, radius, bgPaint);
 			canvas.drawCircle(cx + i*3*radius, cy, radius, bgPaint);
 		}
 		canvas.drawCircle(cx+shift, cy, radius+2, circlePaint);
@@ -46,7 +49,7 @@ public class PagerIndicator extends ImageView{
 		bgPaint.setStrokeWidth(2);
 		bgPaint.setAntiAlias(true);
 		circlePaint = new Paint();
-		circlePaint.setColor(Color.WHITE);
+		circlePaint.setColor(getResources().getColor(R.color.blue_circle));
 		circlePaint.setAntiAlias(true);
 		
 	}

@@ -13,6 +13,7 @@ import com.example.ex.LogUtils;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 public class UilUtil {
@@ -22,6 +23,7 @@ public class UilUtil {
 	.showImageOnFail(R.drawable.ic_error)
 	.cacheInMemory(true)
 	.cacheOnDisk(true)
+	.displayer(new RoundedBitmapDisplayer(20))
 	.considerExifParams(true)
 	.build();
 	static private Md5FileNameGenerator generator;
@@ -34,10 +36,8 @@ public class UilUtil {
 				if(generator==null){
 					generator = new Md5FileNameGenerator();
 				}
-			Log.e("Constant.STORE_PATH_UIL+generator.generate(uri)", Constant.STORE_PATH_UIL+"/"+generator.generate(uri));
 				//没有缓存
 				if(!new File(Constant.STORE_PATH_UIL+"/"+generator.generate(uri)).exists()){
-//					imageLoader .displayImage(uri, imageView, options, listener);
 //					LogUtils.e("WIFI模式","没有缓存"); 
 					imageView.setImageResource(R.drawable.ic_duobei);
 					return;

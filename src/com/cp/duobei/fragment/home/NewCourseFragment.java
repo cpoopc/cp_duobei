@@ -391,6 +391,7 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 			String imagePath = courseInfo.getImagepath();
 //			HashCodeFileNameGenerator generator = new HashCodeFileNameGenerator();
 			//FIXME 打log时发现第一张图片被多次加载,全部图片被加载2次
+			//这是由于嵌套时候重写的onmeasure,导致多次测量
 			
 //			//使用UIL异步加载图片
 //			imageLoader.displayImage(imagePath, imageView, UilUtil.options, null);
@@ -399,7 +400,7 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 			return inflate;
 		}}
 	public void refresh() {
-		JSONPATH = "http://cpduobei.qiniudn.com/newcourse/newcourse1.txt";
+		JSONPATH = "http://cpduobeinew.qiniudn.com/newcourse/newcourse2.txt";
 		mPullToRefreshLayout.setRefreshing(true);
 		filedownload();
 	}

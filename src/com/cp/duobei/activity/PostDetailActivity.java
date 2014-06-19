@@ -15,7 +15,6 @@ import com.actionbarsherlock.view.MenuItem;
 import com.cp.duobei.R;
 import com.cp.duobei.dao.Constant;
 import com.cp.duobei.dao.PostDetail;
-import com.cp.duobei.utils.HtmlLoader;
 import com.cp.duobei.utils.SwipeBackSherlockActivity;
 import com.example.ex.AbstractFileAsynctask;
 import com.example.ex.LogUtils;

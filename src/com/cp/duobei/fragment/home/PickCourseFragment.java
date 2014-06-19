@@ -19,6 +19,8 @@ import com.cp.duobei.dao.CourseInfo;
 import com.cp.duobei.fragment.AbstractFragment;
 import com.cp.duobei.utils.ConnectiveUtils;
 import com.cp.duobei.utils.UilUtil;
+import com.cp.duobei.widget.XListView;
+import com.cp.duobei.widget.XListView.IXListViewListener;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -50,7 +52,7 @@ import com.example.ex.LogUtils;
 import com.example.ex.ToastUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.umeng.analytics.MobclickAgent;
-public class PickCourseFragment extends AbstractFragment implements OnRefreshListener {
+public class PickCourseFragment extends AbstractFragment implements IXListViewListener,OnRefreshListener {
 	//文件下载+数据持久化
 	private boolean hasNet;
 	private String JSONPATH_PICK = Constant.JSON_PICKCOURSE;
@@ -68,7 +70,7 @@ public class PickCourseFragment extends AbstractFragment implements OnRefreshLis
 	
 	//gridview+Adapter
 	private CourseAdapter mCourseAdapter;
-	private ListView mListViewPickcourse;
+	private XListView mListViewPickcourse;
 	//uil
 	protected ImageLoader imageLoader = ImageLoader.getInstance();
 	private MainActivity mainActivity;
@@ -123,14 +125,16 @@ public class PickCourseFragment extends AbstractFragment implements OnRefreshLis
 			ToastUtils.showToast(getActivity(), Constant.CONNECT_ERRO);
 			return ;
 		}
-		courseList.clear();
 		FiledownAsynctask filedownAsynctask = new FiledownAsynctask();
 		filedownAsynctask.execute(JSONPATH_PICK,LOCALPATH_PICK);
 	}
 	
 	private void initgridview(View inflate) {
-		mListViewPickcourse = (ListView) inflate.findViewById(R.id.fragment_pickcourse_listView1);
+		mListViewPickcourse = (XListView) inflate.findViewById(R.id.fragment_pickcourse_listView1);
 		mCourseAdapter = new CourseAdapter();
+		mListViewPickcourse.setPullRefreshEnable(false);
+		mListViewPickcourse.setPullLoadEnable(true);
+		mListViewPickcourse.setXListViewListener(this);
 		//防止自动跳到底
 		mListViewPickcourse.setAdapter(mCourseAdapter);
 //		mGridView.setOnClickListener(new GridviewListener());
@@ -246,6 +250,7 @@ public class PickCourseFragment extends AbstractFragment implements OnRefreshLis
 			return inflate;
 		}}
 	public void refresh() {
+		courseList.clear();
 		filedownload();
 	}
 	@Override
@@ -270,6 +275,20 @@ public class PickCourseFragment extends AbstractFragment implements OnRefreshLis
                 mPullToRefreshLayout.setRefreshComplete();
             }
         }.execute();
+		
+	}
+
+	@Override
+	public void onRefresh() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onLoadMore() {
+		filedownload();
+		mListViewPickcourse.stopLoadMore();
+		mListViewPickcourse.setRefreshTime("刚刚");
 		
 	}
 }

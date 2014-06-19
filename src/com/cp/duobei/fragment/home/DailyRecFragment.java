@@ -13,12 +13,12 @@ import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 import com.cp.duobei.R;
+import com.cp.duobei.activity.CourseDetailActivity;
 import com.cp.duobei.dao.Constant;
+import com.cp.duobei.dao.CourseInfo;
 import com.cp.duobei.dao.CourseRecInfo;
 import com.cp.duobei.dao.RecentlyInfo;
 import com.cp.duobei.fragment.AbstractFragment;
-import com.cp.duobei.fragment.home.RecentlyFragment.RecentlyAdapter;
-import com.cp.duobei.fragment.home.RecentlyFragment.RecentlyAdapter.ViewHolder;
 import com.cp.duobei.utils.ConnectiveUtils;
 import com.cp.duobei.utils.UilUtil;
 import com.example.ex.AbstractFileAsynctask;
@@ -28,15 +28,19 @@ import com.example.ex.ToastUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.umeng.analytics.MobclickAgent;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class DailyRecFragment extends AbstractFragment implements OnRefreshListener {
 	//文件下载+数据持久化
@@ -50,7 +54,6 @@ public class DailyRecFragment extends AbstractFragment implements OnRefreshListe
 	ArrayList<CourseRecInfo> courserecListLocal = new ArrayList<CourseRecInfo>();
 	private ArrayList<RecentlyInfo> recentlyList = new ArrayList<RecentlyInfo>();
 	private ArrayList<RecentlyInfo> recentlyListLocal = new ArrayList<RecentlyInfo>();
-	private RecentlyAdapter adapterRec;
 	private DailyrecAdapter adapter;
 	//uil
 	private ImageLoader imageLoader = ImageLoader.getInstance();
@@ -90,18 +93,13 @@ public class DailyRecFragment extends AbstractFragment implements OnRefreshListe
 	private void initlistview(View layout) {
 		ListView mListView = (ListView) layout.findViewById(R.id.lv_fragment_dailyrec);
 //		//嵌套listview
-//		View inflate = getActivity().getLayoutInflater().inflate(R.layout.fragment_recently, null);
-//		ListView findlistview = (ListView) inflate.findViewById(R.id.lv_fragment_recently);
-//		TextView headview_rec = new TextView(getActivity());
-//		headview_rec.setText("近期更新");
-//		findlistview.addHeaderView(headview_rec);
-//		adapterRec = new RecentlyAdapter();
-//		findlistview.setAdapter(adapterRec);
 		TextView headview_daily = new TextView(getActivity());
 		headview_daily.setText("每日推荐");
-		mListView.addHeaderView(headview_daily);
+		headview_daily.setPadding(10, 10, 10, 10);
+		mListView.addHeaderView(headview_daily, null, false);
 //		mListView.addFooterView(inflate);
 		adapter = new DailyrecAdapter();
+		mListView.setOnItemClickListener(new MyItemListener());
 		mListView.setAdapter(adapter);
 	}
 	private void pulltoreflash(View layout) {
@@ -154,6 +152,42 @@ public class DailyRecFragment extends AbstractFragment implements OnRefreshListe
 			}
 		}
 	}
+	
+	
+	class MyItemListener implements OnItemClickListener{
+
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
+			Intent intent = new Intent(getActivity(),CourseDetailActivity.class);
+			int count = hasNet ? courserecList.size():courserecListLocal.size();
+			CourseRecInfo courseRecInfo = null;
+			if(position>count){
+				position -= count;
+				if(hasNet){
+					courseRecInfo = courserecList.get(position-2);
+					courseRecInfo.title = recentlyList.get(position-2).title;
+				}else{
+					courseRecInfo = courserecListLocal.get(position-2);
+					courseRecInfo.title = recentlyListLocal.get(position-2).title;
+				}
+			}else{//
+				if(hasNet){
+					courseRecInfo = courserecList.get(position-1);
+				}else{
+					courseRecInfo = courserecListLocal.get(position-1);
+				}
+			}
+				//每日推荐
+			intent.putExtra("imagepath", courseRecInfo.imagepath);
+			intent.putExtra("title", courseRecInfo.title);
+			intent.putExtra("json_lesson_path", courseRecInfo.detailpage);
+			Toast.makeText(getActivity(), "position"+position, Toast.LENGTH_SHORT).show();
+			startActivity(intent);
+		}
+	}
+	
+	
 	class FiledownTask_DAILY extends AbstractFileAsynctask{
 		@Override
 		protected void onPostExecute(String result) {
@@ -230,6 +264,18 @@ public class DailyRecFragment extends AbstractFragment implements OnRefreshListe
 			return 0;
 		}
 		@Override
+		public boolean isEnabled(int position) {
+			count = hasNet ? courserecList.size():courserecListLocal.size();
+			if(position<count){
+				//每日推荐
+				return true;
+			}else if(position==count){
+				//文字行
+				return false;
+				//近期更新
+			}else return true;
+		}
+		@Override
 		public int getItemViewType(int position) {
 			count = hasNet ? courserecList.size():courserecListLocal.size();
 			if(position<count){
@@ -283,11 +329,11 @@ public class DailyRecFragment extends AbstractFragment implements OnRefreshListe
 				holder.tv_title.setText(info.title);
 				holder.tv_author.setText(info.author);
 				holder.tv_good.setText(info.good);
-//				imageLoader.displayImage(info.imagepath, holder.img_title, UilUtil.options, null);
 				UilUtil.loadimg(getActivity(),info.imagepath, holder.img_title, null, null);
 			}else if(getItemViewType(position)==1){
 				TextView textView = new TextView(getActivity());
 				textView.setText("近期更新");
+				textView.setPadding(10, 10, 10, 10);
 				layout = textView;
 			}else{
 				ViewHolder_2 holder;
@@ -312,61 +358,9 @@ public class DailyRecFragment extends AbstractFragment implements OnRefreshListe
 				holder.tv_author.setText(info.author);
 				holder.tv_content.setText(info.content);
 			}
-//			LogUtils.e("DailyRec", "info.imagepath"+info.imagepath);
 			return layout;
 		}}
 	
-//	class RecentlyAdapter extends BaseAdapter{
-//		
-//		@Override
-//		public int getCount() {
-//			if(hasNet){
-//				return recentlyList.size();
-//			}
-//			return recentlyListLocal.size();
-//		}
-//
-//		@Override
-//		public Object getItem(int position) {
-//			return null;
-//		}
-//
-//		@Override
-//		public long getItemId(int position) {
-//			return 0;
-//		}
-//		class ViewHolder{
-//			TextView tv_title;
-//			TextView tv_author;
-//			TextView tv_content;
-//		}
-//		@Override
-//		public View getView(int position, View convertView, ViewGroup parent) {
-//			View layout;
-//			ViewHolder holder;
-//			if(convertView!=null){
-//				layout = convertView;
-//				holder = (ViewHolder) layout.getTag();
-//			}else{
-//				layout = getActivity().getLayoutInflater().inflate(R.layout.listview_item_recently, null);
-//				holder= new ViewHolder();
-//				holder.tv_title = (TextView) layout.findViewById(R.id.tv_recently_title);
-//				holder.tv_author = (TextView) layout.findViewById(R.id.tv_recently_author);
-//				holder.tv_content = (TextView) layout.findViewById(R.id.tv_recently_content);
-//				layout.setTag(holder);
-//			}
-//			RecentlyInfo info;
-//			if(hasNet){
-//				info = recentlyList.get(position);
-//			}else{
-//				info = recentlyListLocal.get(position);
-//			}
-//			holder.tv_title.setText(info.title);
-//			holder.tv_author.setText(info.author);
-//			holder.tv_content.setText(info.content);
-//			return layout;
-//		}
-//	}
 	public void refresh() {
 		filedownload();
 	}

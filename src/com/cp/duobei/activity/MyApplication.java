@@ -40,11 +40,6 @@ public class MyApplication extends Application {
 		isWifiMode = sp.getBoolean("key_wifi", false);
 	}
 	public static void initImageLoader(Context context) {
-		// This configuration tuning is custom. You can tune every option, you may tune some of them,
-		// or you can create default configuration by
-		//  ImageLoaderConfiguration.createDefault(this);
-		// method.
-		//new File("/data/data/"+context.getPackageName()+"/uil/"),
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
 				.threadPriority(Thread.NORM_PRIORITY - 2)
 				.denyCacheImageMultipleSizesInMemory()
@@ -56,10 +51,7 @@ public class MyApplication extends Application {
 						new Md5FileNameGenerator()))//使用MD5生成名字,不设则默认为hash(UnlimitedDiscCache父类BaseDiscCache中指定)
 				.tasksProcessingOrder(QueueProcessingType.LIFO)
 //				.memoryCache(memoryCache)
-//				Default value - LruMemoryCache with limited memory cache size (size = 1/8 of available app memory)
-//				.writeDebugLogs() // Remove for release app
 				.build();
-		// Initialize ImageLoader with configuration.
 		ImageLoader.getInstance().init(config);
 	}
 }

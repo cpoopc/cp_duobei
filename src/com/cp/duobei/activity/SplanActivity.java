@@ -43,11 +43,11 @@ public class SplanActivity extends Activity {
 		AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
 		alphaAnimation.setDuration(DURATION);
 		findViewById(R.id.imageView1).startAnimation(alphaAnimation);
-		final FlakeView flakeView = new FlakeView(this);
-		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.container);
-		linearLayout.addView(flakeView);
-//    flakeView.setBackgroundColor(getResources().getColor(R.color.white));
-		flakeView.addFlakes(flakeView.getNumFlakes());
+//		final FlakeView flakeView = new FlakeView(this);
+//		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.container);
+//		linearLayout.addView(flakeView);
+////    flakeView.setBackgroundColor(getResources().getColor(R.color.white));
+//		flakeView.addFlakes(flakeView.getNumFlakes());
 		mHandler.postDelayed(new Runnable() {
 			
 			@Override
