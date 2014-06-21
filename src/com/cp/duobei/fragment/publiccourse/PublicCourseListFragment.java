@@ -105,7 +105,10 @@ public class PublicCourseListFragment extends AbstractFragment implements IXList
 			}else{
 				try { 
 					JSONArray jsonArray = new JSONArray(result);
-//					publiccourseList.clear();
+					if(!loadMore){
+						publiccourseList.clear();
+					}
+					loadMore = false;
 					new CourseRecInfo().readJsonArray(jsonArray, publiccourseList);
 					hasNet = true;
 					if(adapter2!=null){
@@ -206,7 +209,7 @@ public class PublicCourseListFragment extends AbstractFragment implements IXList
 //		Toast.makeText(getActivity(), str, 0).show();
 		x++;
 		x %=4;
-		publiccourseList.clear();
+//		publiccourseList.clear();
 		filedownload(Constant.PATH_PUBLICCOURSE+"/publiccourse"+x+".txt");
 		return false;
 	}
@@ -275,11 +278,12 @@ public class PublicCourseListFragment extends AbstractFragment implements IXList
 		// TODO Auto-generated method stub
 		
 	}
-
+	boolean loadMore;
 	@Override
 	public void onLoadMore() {
 		x++;
 		x %=4;
+		loadMore = true;
 		filedownload(Constant.PATH_PUBLICCOURSE+"/publiccourse"+x+".txt");
 		mListView.stopLoadMore();
 		mListView.setRefreshTime("刚刚");

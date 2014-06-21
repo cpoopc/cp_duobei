@@ -253,6 +253,7 @@ public class TopicHotFragment extends AbstractFragment implements IXListViewList
                 super.onPostExecute(result);
                 // Notify PullToRefreshLayout that the refresh has finished
                 refresh();
+                if(mPullToRefreshLayout!=null)
                 mPullToRefreshLayout.setRefreshComplete();
             }
         }.execute();
@@ -268,6 +269,7 @@ public class TopicHotFragment extends AbstractFragment implements IXListViewList
 	}
 	@Override
 	public void refresh() {
+		if(getActivity()==null)return;
 		if(!ConnectiveUtils.isConnected(getActivity())){
 			ToastUtils.showToast(getActivity(), Constant.CONNECT_ERRO);
 			return ;

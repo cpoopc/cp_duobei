@@ -295,6 +295,7 @@ public class DailyRecFragment2 extends AbstractFragment implements OnRefreshList
 			return layout;
 		}}
 	public void refresh() {
+		if(getActivity()==null)return;
 		filedownload_daily();
 		filedownload_rec();
 	}
@@ -317,6 +318,7 @@ public class DailyRecFragment2 extends AbstractFragment implements OnRefreshList
                 super.onPostExecute(result);
                 refresh();
                 // Notify PullToRefreshLayout that the refresh has finished
+                if(mPullToRefreshLayout!=null)
                 mPullToRefreshLayout.setRefreshComplete();
             }
         }.execute();

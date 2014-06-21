@@ -15,6 +15,12 @@ public class SettingAdapter extends BaseAdapter {
 	Context mContext;
 	public String[] mTitle;
 	int images[];
+	TextView mTitleTextview;
+	public void setTitle(String name){
+		if(mTitleTextview!=null){
+			mTitleTextview.setText(name);
+		}
+	}
 	public void setTitle0(String name){
 		mTitle[0] = name;
 //		mTitle = new String[]{name,mTitle[1],mTitle[2],mTitle[3],mTitle[4]};
@@ -53,6 +59,9 @@ public class SettingAdapter extends BaseAdapter {
 		Log.e("mTitle", mTitle+"");
 		View inflate = LayoutInflater.from(mContext).inflate(R.layout.listview_item_setting_01, null);
 		TextView textView = (TextView) inflate.findViewById(R.id.textView1);
+		if(position==0){
+			mTitleTextview = textView;
+		}
 		ImageView imageView = (ImageView) inflate.findViewById(R.id.imageView1);
 		imageView.setImageResource(images[position]);
 		textView.setText(mTitle[position]);

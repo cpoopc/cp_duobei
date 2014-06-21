@@ -264,6 +264,7 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
 //		LogUtils.e("readfromlocal: useTime", (stop-start)+"毫秒");
 	}
 	private void filedownload() {
+		if(getActivity()==null)return;
 		if(!ConnectiveUtils.isConnected(getActivity())){
 			ToastUtils.showToast(getActivity(), Constant.CONNECT_ERRO);
 			return ;
@@ -422,6 +423,7 @@ public class NewCourseFragment extends AbstractFragment implements OnRefreshList
             protected void onPostExecute(Void result) {
                 super.onPostExecute(result);
                 refresh();
+                if(mPullToRefreshLayout!=null)
                 // Notify PullToRefreshLayout that the refresh has finished
                 mPullToRefreshLayout.setRefreshComplete();
             }

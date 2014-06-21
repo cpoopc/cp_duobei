@@ -78,6 +78,7 @@ public class RecentlyFragment extends AbstractFragment implements OnRefreshListe
                  .setup(mPullToRefreshLayout);
 	}
 	private void filedownload() {
+		if(getActivity()==null)return;
 		recentlyList.clear();
 		FiledownTask filedowTask = new FiledownTask();
 		filedowTask.execute(JSONPATH,LOCALPATH);//下载并保存
@@ -207,6 +208,7 @@ public class RecentlyFragment extends AbstractFragment implements OnRefreshListe
                 super.onPostExecute(result);
                 refresh();
                 // Notify PullToRefreshLayout that the refresh has finished
+                if(mPullToRefreshLayout!=null)
                 mPullToRefreshLayout.setRefreshComplete();
             }
         }.execute();

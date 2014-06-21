@@ -130,7 +130,7 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		mhomeFragment.addpager("每日推荐",new DailyRecFragment());
 		mhomeFragment.addpager("精选课程",new PickCourseFragment());
 		ft.add(R.id.container, mhomeFragment);
-//		ft.addToBackStack(null);
+		ft.addToBackStack(null);
 		ft.commit();
 	}
 	/**
@@ -158,7 +158,7 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		//用户名
 		if(username!=null && !"".equals(username)){
 			mTitle[0] = username;
-		}
+		} 
 		settingAdapter = new SettingAdapter(this,mTitle,images);
 		mListView.setAdapter(settingAdapter); 
 		mListView.setOnItemClickListener(this);
@@ -201,6 +201,7 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 *	
  */
 	private ArrayList<String> resultList = new ArrayList<String>();
+private PublicCourseListFragment mCourseListFragment;
 	private void initSearch(Menu menu) {
 		//Create the search view
 		final SearchView searchView = new SearchView(getSupportActionBar().getThemedContext());
@@ -278,19 +279,19 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		switch (position) {
 		case MENU_LOGIN:
 			if(username!=null && !"".equals(username)){
-//				if(mloginFragment != null){
-//					fragment = mloginFragment;
-//					break;
-//				}
+				if(mloginFragment != null){
+					fragment = mloginFragment;
+					break;
+				}
 				mloginFragment = new HomeFragment();
 				mloginFragment.addpager("我的课表", new MyCourseFragment());
 				mloginFragment.addpager("我的资料", new MyInfoFragment());
 				fragment = mloginFragment;
 			}else{
-//				if(mloginFragment != null){
-//					fragment = mloginFragment;
-//					break;
-//				}
+				if(mloginFragment != null){
+					fragment = mloginFragment;
+					break;
+				}
 				mloginFragment = new HomeFragment();
 				mloginFragment.addpager("登陆", new LoginFragment());
 				mloginFragment.addpager("注册", new RegistFragment());
@@ -298,10 +299,10 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 			}
 			break;
 		case MENU_HOME:
-//			if(mhomeFragment != null){
-//				fragment = mhomeFragment;
-//				break;
-//			}
+			if(mhomeFragment != null){
+				fragment = mhomeFragment;
+				break;
+			}
 				mhomeFragment = new HomeFragment();
 				mhomeFragment.addpager("新课速递",new NewCourseFragment());
 				mhomeFragment.addpager("每日推荐",new DailyRecFragment());
@@ -310,27 +311,22 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 			
 			break;
 		case MENU_GROUP:
-//			if(mgroupFragment !=null){
-//				fragment = mgroupFragment;
-//				break;
-//			}
+			if(mgroupFragment !=null){
+				fragment = mgroupFragment;
+				break;
+			}
 			mgroupFragment = new HomeFragment();
 			mgroupFragment.addpager("热门话题",new TopicHotFragment());
 			mgroupFragment.addpager("发现小组",new GroupFindFragment());
 			fragment = mgroupFragment;
 			break;
 		case MENU_COURSE:
-//			if(mcourseFragment !=null){
-//				fragment = mcourseFragment;
-//				break;
-//			}
-//			mhomeFragment = null;
-//			mcourseFragment = new HomeFragment();
-//			mcourseFragment.addpager("发现课程",new PublicCourseListFragment());
-//			mcourseFragment.addpager("近期预告",new DailyRecFragment2());
-//			mcourseFragment.addpager("精选",new RecentlyFragment());
-//			fragment = mcourseFragment;
-			fragment = new PublicCourseListFragment();
+			if(mCourseListFragment !=null){
+				fragment = mCourseListFragment;
+				break;
+			}
+			mCourseListFragment = new PublicCourseListFragment();
+			fragment = mCourseListFragment;
 			break;
 		case MENU_SETTING:
 			startActivity(new Intent(this,SettingActivity.class));
@@ -341,7 +337,7 @@ public class MainActivity extends SherlockFragmentActivity implements SearchView
 		if(fragment!=null){
 			FragmentTransaction ft = fm.beginTransaction();
 			ft.replace(R.id.container, fragment);
-//			ft.addToBackStack(null);
+			ft.addToBackStack(null);
 			ft.commit();
 		}
 		mDrawer.closeMenu(true);
@@ -387,21 +383,26 @@ public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if(username == null||"".equals(username)){
 			mloginFragment.addpager("登陆", new LoginFragment());
 			mloginFragment.addpager("注册", new RegistFragment());
-			SharedPreferences sp = getPreferences(MODE_PRIVATE);
+			SharedPreferences sp = getPreferences(0);
 			Editor edit = sp.edit();
 			edit.putBoolean("autologin", false);
 			edit.commit();
 			autologin = false;
 			settingAdapter.setTitle0("登陆");
+			settingAdapter.setTitle("登陆");
 		}else{
 			mloginFragment.addpager("我的课表", new MyCourseFragment());
 			mloginFragment.addpager("我的资料", new MyInfoFragment());
 			settingAdapter.setTitle0(username);
+			settingAdapter.setTitle(username);
 		}
+
+		
 		FragmentTransaction ft = fm.beginTransaction();
 		ft.replace(R.id.container, mloginFragment);
-//		ft.addToBackStack(null);
+		ft.addToBackStack(null);
 		ft.commit();
-		settingAdapter.notifyDataSetChanged();
+//		settingAdapter.notifyDataSetChanged();//无法及时改变状态,不知道为什么 - -
+//		settingAdapter.notifyDataSetInvalidated();
 	}
 }

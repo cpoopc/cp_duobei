@@ -30,15 +30,19 @@ import android.widget.TextView;
  *
  */
 public class HomeFragment extends Fragment implements OnTabChangeListener, OnPageChangeListener {
-	private ArrayList<View> viewList = new ArrayList<View>();
-	private ArrayList<String> tabnameList = new ArrayList<String>();
-	private ArrayList<Fragment> fragmentList = new ArrayList<Fragment>();
+//	private ArrayList<View> viewList = new ArrayList<View>();
+	private ArrayList<String> tabnameList;
+	private ArrayList<Fragment> fragmentList;
 	private TabHost mTabHost;
 	private ViewPager mViewPager;
 	private MyFragmentAdapter mAdapter;
 	private MainActivity mainActivity;
 	//提供给mainactivity
 	public void addpager(String tabname,Fragment fragment) {
+		if(tabnameList==null){
+			 tabnameList = new ArrayList<String>();
+			 fragmentList = new ArrayList<Fragment>();
+		}
 		tabnameList.add(tabname);
 		fragmentList.add(fragment);
 	}
@@ -128,7 +132,6 @@ public class HomeFragment extends Fragment implements OnTabChangeListener, OnPag
 	@Override
 	public void onPageSelected(int arg0) {
 		mTabHost.setCurrentTab(arg0);
-		LogUtils.e("onPageSelected", ""+arg0);
 				if(arg0==0){
 					mainActivity.setMenuDrawerEnable(true);
 				}else{

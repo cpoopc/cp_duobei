@@ -121,6 +121,7 @@ public class PickCourseFragment extends AbstractFragment implements IXListViewLi
 		}
 	}
 	private void filedownload() {
+		if(getActivity()==null)return;
 		if(!ConnectiveUtils.isConnected(getActivity())){
 			ToastUtils.showToast(getActivity(), Constant.CONNECT_ERRO);
 			return ;
@@ -148,14 +149,13 @@ public class PickCourseFragment extends AbstractFragment implements IXListViewLi
 			Intent intent = new Intent(getActivity(),CourseDetailActivity.class);
 			CourseInfo courseInfo ;
 			if(hasNet){
-				courseInfo = courseList.get(position);
+				courseInfo = courseList.get(position-1);
 			}else{
-				courseInfo = courseListLocal.get(position);
+				courseInfo = courseListLocal.get(position-1);
 			}
 			intent.putExtra("imagepath", courseInfo.imagepath);
 			intent.putExtra("title", courseInfo.title);
 			intent.putExtra("json_lesson_path", courseInfo.detailpage);
-			Toast.makeText(getActivity(), "position"+position, Toast.LENGTH_SHORT).show();
 			startActivity(intent);
 		}
 		}
@@ -272,6 +272,7 @@ public class PickCourseFragment extends AbstractFragment implements IXListViewLi
                 super.onPostExecute(result);
                 refresh();
                 // Notify PullToRefreshLayout that the refresh has finished
+                if(mPullToRefreshLayout!=null)
                 mPullToRefreshLayout.setRefreshComplete();
             }
         }.execute();

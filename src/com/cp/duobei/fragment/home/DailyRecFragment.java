@@ -31,6 +31,7 @@ import com.umeng.analytics.MobclickAgent;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,6 +77,10 @@ public class DailyRecFragment extends AbstractFragment implements OnRefreshListe
 			Bundle savedInstanceState) {
 		View layout = inflater.inflate(R.layout.fragment_dailyrec, null);
 		 pulltoreflash(layout);
+			courserecList = new ArrayList<CourseRecInfo>();
+			courserecListLocal = new ArrayList<CourseRecInfo>();
+			recentlyList = new ArrayList<RecentlyInfo>();
+			recentlyListLocal = new ArrayList<RecentlyInfo>();
 		 readfromlocal(LOCALPATH_DAILY,LOCALPATH_REC);
 		 filedownload();
 		 initlistview(layout);
@@ -83,6 +88,7 @@ public class DailyRecFragment extends AbstractFragment implements OnRefreshListe
 	}
 
 	private void filedownload() {
+		if(getActivity()==null)return;
 		if(!ConnectiveUtils.isConnected(getActivity())){
 			ToastUtils.showToast(getActivity(), Constant.CONNECT_ERRO);
 			return ;
@@ -383,6 +389,7 @@ public class DailyRecFragment extends AbstractFragment implements OnRefreshListe
                 super.onPostExecute(result);
                 refresh();
                 // Notify PullToRefreshLayout that the refresh has finished
+                if(mPullToRefreshLayout!=null)
                 mPullToRefreshLayout.setRefreshComplete();
             }
         }.execute();

@@ -93,6 +93,7 @@ public class GroupFindFragment extends AbstractFragment implements OnRefreshList
                  .setup(mPullToRefreshLayout);
 	}
 	private void filedownload() {
+		if(getActivity()==null)return;
 		if(!ConnectiveUtils.isConnected(getActivity())){
 			ToastUtils.showToast(getActivity(), Constant.CONNECT_ERRO);
 			return ;
@@ -234,6 +235,7 @@ public class GroupFindFragment extends AbstractFragment implements OnRefreshList
             protected void onPostExecute(Void result) {
                 super.onPostExecute(result);
                 reflash();
+                if(mPullToRefreshLayout!=null)
                 // Notify PullToRefreshLayout that the refresh has finished
                 mPullToRefreshLayout.setRefreshComplete();
             }
